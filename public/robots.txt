@@ -1,0 +1,26 @@
+# Robots.txt for Pilom
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /settings
+Disallow: /account
+Disallow: /contacts
+Disallow: /devis
+Disallow: /factures
+Disallow: /reglements
+Disallow: /depenses
+Disallow: /products
+Disallow: /categories
+Disallow: /fournisseurs
+Disallow: /treasury
+Disallow: /documents
+Disallow: /notifications
+Disallow: /statistics
+Disallow: /recurring-invoices
+
+# Sitemap location
+Sitemap: https://pilom.fr/sitemap.xml
