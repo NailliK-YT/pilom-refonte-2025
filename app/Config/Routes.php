@@ -23,7 +23,87 @@ $routes->get('privacy', 'PagesController::privacy');
 $routes->get('login', 'AuthController::login');
 $routes->post('login/attempt', 'AuthController::attemptLogin');
 $routes->get('logout', 'AuthController::logout');
+
+// Password reset routes
 $routes->get('forgot-password', 'AuthController::forgotPassword');
+$routes->post('forgot-password', 'AuthController::sendResetLink');
+$routes->get('reset-password/(:any)', 'AuthController::resetPassword/$1');
+$routes->post('reset-password', 'AuthController::updatePassword');
+
+// Company selection (for multi-company users)
+$routes->get('select-company', 'CompanySwitchController::select', ['filter' => 'auth']);
+$routes->post('switch-company/(:segment)', 'CompanySwitchController::switch/$1', ['filter' => 'auth']);
+$routes->get('api/company/current', 'CompanySwitchController::current', ['filter' => 'auth']);
+
+// ============================================
+// MODULE ADMINISTRATION UTILISATEURS
+// ============================================
+$routes->group('admin/users', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'UsersController::index', ['filter' => 'role:users.view']);
+    $routes->get('invite', 'UsersController::create', ['filter' => 'role:users.manage']);
+    $routes->post('invite', 'UsersController::store', ['filter' => 'role:users.manage']);
+    $routes->get('edit/(:segment)', 'UsersController::edit/$1', ['filter' => 'role:users.manage']);
+    $routes->post('update/(:segment)', 'UsersController::update/$1', ['filter' => 'role:users.manage']);
+    $routes->post('suspend/(:segment)', 'UsersController::suspend/$1', ['filter' => 'role:users.manage']);
+    $routes->post('activate/(:segment)', 'UsersController::activate/$1', ['filter' => 'role:users.manage']);
+    $routes->post('remove/(:segment)', 'UsersController::remove/$1', ['filter' => 'role:users.manage']);
+});
+
+// ============================================
+// MODULE JOURNAL D'AUDIT
+// ============================================
+$routes->group('admin/audit', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'AuditController::index', ['filter' => 'role:users.view']);
+    $routes->get('export', 'AuditController::exportCsv', ['filter' => 'role:users.view']);
+    $routes->get('show/(:segment)', 'AuditController::show/$1', ['filter' => 'role:users.view']);
+});
+
+// ============================================
+// MODULE TABLEAU DE BORD ADMIN
+// ============================================
+$routes->group('admin/dashboard', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'AdminDashboardController::index', ['filter' => 'role:users.view']);
+    $routes->get('security', 'AdminDashboardController::security', ['filter' => 'role:users.view']);
+});
+
+// ============================================
+// MODULE GESTION DES PERMISSIONS
+// ============================================
+$routes->group('admin/permissions', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'PermissionsController::index', ['filter' => 'role:users.manage']);
+    $routes->get('create', 'PermissionsController::create', ['filter' => 'role:users.manage']);
+    $routes->post('create', 'PermissionsController::store', ['filter' => 'role:users.manage']);
+    $routes->get('copy/(:num)', 'PermissionsController::copy/$1', ['filter' => 'role:users.manage']);
+    $routes->post('copy/(:num)', 'PermissionsController::storeCopy/$1', ['filter' => 'role:users.manage']);
+    $routes->get('role/(:num)', 'PermissionsController::editRole/$1', ['filter' => 'role:users.manage']);
+    $routes->post('role/(:num)', 'PermissionsController::updateRole/$1', ['filter' => 'role:users.manage']);
+    $routes->post('delete/(:num)', 'PermissionsController::deleteRole/$1', ['filter' => 'role:users.manage']);
+});
+
+// User invitation acceptance (public route)
+$routes->get('invitation/accept/(:any)', 'UsersController::acceptInvitation/$1');
+
+// ============================================
+// MODULE GESTION MULTI-ENTREPRISES
+// ============================================
+$routes->group('companies', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'CompanyManagementController::index');
+    $routes->get('create', 'CompanyManagementController::create');
+    $routes->post('create', 'CompanyManagementController::store');
+    $routes->post('primary/(:any)', 'CompanyManagementController::setPrimary/$1');
+    $routes->get('transfer/(:any)', 'CompanyManagementController::transferForm/$1');
+    $routes->post('transfer/(:any)', 'CompanyManagementController::transfer/$1');
+    $routes->post('leave/(:any)', 'CompanyManagementController::leave/$1');
+});
+
+// ============================================
+// MODULE RGPD (Protection des données)
+// ============================================
+$routes->group('account/rgpd', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'RgpdController::index');
+    $routes->get('export', 'RgpdController::exportMyData');
+    $routes->post('delete', 'RgpdController::requestDeletion');
+});
 
 // Routes existantes
 $routes->match(['GET', 'POST'], 'login-old', 'Auth::login');

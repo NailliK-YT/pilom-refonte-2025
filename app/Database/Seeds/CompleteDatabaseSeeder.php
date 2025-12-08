@@ -172,6 +172,20 @@ class CompleteDatabaseSeeder extends Seeder
             $sectorId = $sector->id;
         }
 
+        // Get the admin role ID
+        $adminRole = $this->db->table('roles')
+            ->where('name', 'admin')
+            ->get()
+            ->getRow();
+        $adminRoleId = $adminRole ? $adminRole->id : 1;
+
+        // Get the user role ID
+        $userRole = $this->db->table('roles')
+            ->where('name', 'user')
+            ->get()
+            ->getRow();
+        $userRoleId = $userRole ? $userRole->id : 2;
+
         // Check if company already exists
         $existing = $this->db->table('companies')
             ->where('name', 'Pilom Tech')
@@ -187,6 +201,8 @@ class CompleteDatabaseSeeder extends Seeder
                 'id' => $companyId,
                 'name' => 'Pilom Tech',
                 'business_sector_id' => $sectorId,
+                'subscription_plan' => 'premium',
+                'max_users' => 10,
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
@@ -194,34 +210,7 @@ class CompleteDatabaseSeeder extends Seeder
             echo "✓ Entreprise de test créée : Pilom Tech\n";
         }
 
-        // Create or update test user
-        $testUser = $this->db->table('users')
-            ->where('email', $this->testEmail)
-            ->get()
-            ->getRow();
-
-        if ($testUser) {
-            $this->db->table('users')
-                ->where('email', $this->testEmail)
-                ->update([
-                    'password_hash' => password_hash($this->testPassword, PASSWORD_DEFAULT),
-                    'company_id' => $companyId,
-                    'updated_at' => date('Y-m-d H:i:s'),
-                ]);
-            echo "✓ Utilisateur {$this->testEmail} mis à jour\n";
-        } else {
-            $testUserId = $this->generateUUID();
-            $testUserData = [
-                'id' => $testUserId,
-                'email' => $this->testEmail,
-                'password_hash' => password_hash($this->testPassword, PASSWORD_DEFAULT),
-                'company_id' => $companyId,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
-            ];
-            $this->db->table('users')->insert($testUserData);
-            echo "✓ Utilisateur {$this->testEmail} créé\n";
-        }
+        $now = date('Y-m-d H:i:s');
 
         // Create or update admin user
         $admin = $this->db->table('users')
@@ -230,12 +219,17 @@ class CompleteDatabaseSeeder extends Seeder
             ->getRow();
 
         if ($admin) {
+            $adminId = $admin->id;
             $this->db->table('users')
                 ->where('email', $this->adminEmail)
                 ->update([
                     'password_hash' => password_hash($this->adminPassword, PASSWORD_DEFAULT),
                     'company_id' => $companyId,
-                    'updated_at' => date('Y-m-d H:i:s'),
+                    'role' => 'admin',
+                    'first_name' => 'Admin',
+                    'last_name' => 'Pilom',
+                    'status' => 'active',
+                    'updated_at' => $now,
                 ]);
             echo "✓ Utilisateur {$this->adminEmail} mis à jour\n";
         } else {
@@ -245,11 +239,97 @@ class CompleteDatabaseSeeder extends Seeder
                 'email' => $this->adminEmail,
                 'password_hash' => password_hash($this->adminPassword, PASSWORD_DEFAULT),
                 'company_id' => $companyId,
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'role' => 'admin',
+                'first_name' => 'Admin',
+                'last_name' => 'Pilom',
+                'status' => 'active',
+                'is_verified' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
             ];
             $this->db->table('users')->insert($adminData);
             echo "✓ Utilisateur {$this->adminEmail} créé\n";
+        }
+
+        // Create user_company record for admin
+        $existingAdminUC = $this->db->table('user_company')
+            ->where('user_id', $adminId)
+            ->where('company_id', $companyId)
+            ->get()
+            ->getRow();
+
+        if (!$existingAdminUC) {
+            $this->db->table('user_company')->insert([
+                'id' => $this->generateUUID(),
+                'user_id' => $adminId,
+                'company_id' => $companyId,
+                'role_id' => $adminRoleId,
+                'is_primary' => true,
+                'status' => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            echo "✓ Association admin-entreprise créée (rôle: admin)\n";
+        }
+
+        // Create or update test user
+        $testUser = $this->db->table('users')
+            ->where('email', $this->testEmail)
+            ->get()
+            ->getRow();
+
+        if ($testUser) {
+            $testUserId = $testUser->id;
+            $this->db->table('users')
+                ->where('email', $this->testEmail)
+                ->update([
+                    'password_hash' => password_hash($this->testPassword, PASSWORD_DEFAULT),
+                    'company_id' => $companyId,
+                    'role' => 'user',
+                    'first_name' => 'Test',
+                    'last_name' => 'User',
+                    'status' => 'active',
+                    'updated_at' => $now,
+                ]);
+            echo "✓ Utilisateur {$this->testEmail} mis à jour\n";
+        } else {
+            $testUserId = $this->generateUUID();
+            $testUserData = [
+                'id' => $testUserId,
+                'email' => $this->testEmail,
+                'password_hash' => password_hash($this->testPassword, PASSWORD_DEFAULT),
+                'company_id' => $companyId,
+                'role' => 'user',
+                'first_name' => 'Test',
+                'last_name' => 'User',
+                'status' => 'active',
+                'is_verified' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+            $this->db->table('users')->insert($testUserData);
+            echo "✓ Utilisateur {$this->testEmail} créé\n";
+        }
+
+        // Create user_company record for test user
+        $existingTestUC = $this->db->table('user_company')
+            ->where('user_id', $testUserId)
+            ->where('company_id', $companyId)
+            ->get()
+            ->getRow();
+
+        if (!$existingTestUC) {
+            $this->db->table('user_company')->insert([
+                'id' => $this->generateUUID(),
+                'user_id' => $testUserId,
+                'company_id' => $companyId,
+                'role_id' => $userRoleId,
+                'is_primary' => true,
+                'status' => 'active',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            echo "✓ Association test-entreprise créée (rôle: user)\n";
         }
     }
 
