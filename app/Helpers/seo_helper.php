@@ -4,11 +4,70 @@
  * SEO Helper Functions
  * 
  * Helper functions for SEO optimization
+ * Extended with additional Schema.org and meta tag utilities
  */
+
+use App\Services\SeoService;
+
+if (!function_exists('seo_service')) {
+    /**
+     * Get the SeoService instance
+     * 
+     * @return SeoService
+     */
+    function seo_service(): SeoService
+    {
+        static $service = null;
+        if ($service === null) {
+            $service = new SeoService();
+        }
+        return $service;
+    }
+}
+
+if (!function_exists('seo_tags')) {
+    /**
+     * Generate all SEO tags (meta, OG, Twitter) using the SeoService
+     * 
+     * @param array $data SEO data array
+     * @return string HTML output
+     */
+    function seo_tags(array $data = []): string
+    {
+        return seo_service()->generateAllTags($data);
+    }
+}
+
+if (!function_exists('seo_title')) {
+    /**
+     * Generate an optimized SEO title (50-60 characters)
+     * 
+     * @param string $title Base title
+     * @param bool $includeSiteName Include site name
+     * @return string Optimized title
+     */
+    function seo_title(string $title, bool $includeSiteName = true): string
+    {
+        return seo_service()->generateTitle($title, $includeSiteName);
+    }
+}
+
+if (!function_exists('seo_description')) {
+    /**
+     * Generate an optimized SEO description (150-160 characters)
+     * 
+     * @param string $description Base description
+     * @return string Optimized description
+     */
+    function seo_description(string $description): string
+    {
+        return seo_service()->generateDescription($description);
+    }
+}
 
 if (!function_exists('seo_meta')) {
     /**
-     * Generate meta tags for SEO
+     * Generate meta tags for SEO (legacy function - kept for backward compatibility)
      */
     function seo_meta(string $title, string $description, ?string $image = null, ?string $url = null): string
     {
@@ -46,21 +105,7 @@ if (!function_exists('schema_organization')) {
      */
     function schema_organization(): string
     {
-        $schema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'Organization',
-            'name' => 'Pilom',
-            'description' => 'Logiciel de facturation et gestion commerciale pour indépendants et PME',
-            'url' => base_url(),
-            'logo' => base_url('images/logo.png'),
-            'contactPoint' => [
-                '@type' => 'ContactPoint',
-                'contactType' => 'customer service',
-                'email' => 'contact@pilom.fr'
-            ]
-        ];
-
-        return '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+        return seo_service()->schemaOrganization();
     }
 }
 
@@ -70,21 +115,7 @@ if (!function_exists('schema_software')) {
      */
     function schema_software(): string
     {
-        $schema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'SoftwareApplication',
-            'name' => 'Pilom',
-            'applicationCategory' => 'BusinessApplication',
-            'operatingSystem' => 'Web',
-            'description' => 'Solution complète de facturation, devis et gestion commerciale',
-            'offers' => [
-                '@type' => 'Offer',
-                'price' => '0',
-                'priceCurrency' => 'EUR'
-            ]
-        ];
-
-        return '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+        return seo_service()->schemaSoftware();
     }
 }
 
@@ -94,23 +125,45 @@ if (!function_exists('schema_breadcrumb')) {
      */
     function schema_breadcrumb(array $items): string
     {
-        $listItems = [];
-        foreach ($items as $i => $item) {
-            $listItems[] = [
-                '@type' => 'ListItem',
-                'position' => $i + 1,
-                'name' => $item['name'],
-                'item' => $item['url']
-            ];
-        }
+        return seo_service()->schemaBreadcrumb($items);
+    }
+}
 
-        $schema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'BreadcrumbList',
-            'itemListElement' => $listItems
-        ];
+if (!function_exists('schema_faq')) {
+    /**
+     * Generate Schema.org FAQPage markup
+     * 
+     * @param array $faqs Array of ['question' => '', 'answer' => '']
+     * @return string JSON-LD script tag
+     */
+    function schema_faq(array $faqs): string
+    {
+        return seo_service()->schemaFaq($faqs);
+    }
+}
 
-        return '<script type="application/ld+json">' . json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+if (!function_exists('schema_local_business')) {
+    /**
+     * Generate Schema.org LocalBusiness markup
+     * 
+     * @return string JSON-LD script tag
+     */
+    function schema_local_business(): string
+    {
+        return seo_service()->schemaLocalBusiness();
+    }
+}
+
+if (!function_exists('schema_webpage')) {
+    /**
+     * Generate Schema.org WebPage markup
+     * 
+     * @param array $data Page data
+     * @return string JSON-LD script tag
+     */
+    function schema_webpage(array $data = []): string
+    {
+        return seo_service()->schemaWebPage($data);
     }
 }
 
@@ -124,3 +177,88 @@ if (!function_exists('canonical_url')) {
         return '<link rel="canonical" href="' . esc($url) . '">';
     }
 }
+
+if (!function_exists('img_alt')) {
+    /**
+     * Generate an SEO-friendly alt tag for an image
+     * 
+     * @param string $filename Image filename or path
+     * @param string|null $context Additional context for the alt text
+     * @return string Alt text
+     */
+    function img_alt(string $filename, ?string $context = null): string
+    {
+        // Extrait le nom de base sans extension
+        $basename = pathinfo($filename, PATHINFO_FILENAME);
+
+        // Remplace les séparateurs par des espaces
+        $alt = str_replace(['-', '_'], ' ', $basename);
+
+        // Met en majuscule la première lettre
+        $alt = ucfirst(strtolower($alt));
+
+        // Ajoute le contexte si fourni
+        if ($context) {
+            $alt = $alt . ' - ' . $context;
+        }
+
+        return $alt;
+    }
+}
+
+if (!function_exists('seo_image_name')) {
+    /**
+     * Generate an SEO-friendly image filename
+     * 
+     * @param string $title Image title or description
+     * @param string $extension File extension
+     * @return string SEO-friendly filename
+     */
+    function seo_image_name(string $title, string $extension = 'jpg'): string
+    {
+        // Convertit en minuscules
+        $filename = strtolower($title);
+
+        // Supprime les accents
+        $filename = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $filename);
+
+        // Remplace les espaces et caractères spéciaux par des tirets
+        $filename = preg_replace('/[^a-z0-9]+/', '-', $filename);
+
+        // Supprime les tirets multiples et aux extrémités
+        $filename = trim(preg_replace('/-+/', '-', $filename), '-');
+
+        return $filename . '.' . $extension;
+    }
+}
+
+if (!function_exists('robots_meta')) {
+    /**
+     * Generate robots meta tag
+     * 
+     * @param string $directive Robots directive (index, noindex, follow, nofollow)
+     * @return string Meta tag HTML
+     */
+    function robots_meta(string $directive = 'index, follow'): string
+    {
+        return '<meta name="robots" content="' . esc($directive) . '">';
+    }
+}
+
+if (!function_exists('hreflang_tags')) {
+    /**
+     * Generate hreflang tags for international SEO
+     * 
+     * @param array $languages Array of ['lang' => 'fr', 'url' => 'https://...']
+     * @return string HTML hreflang tags
+     */
+    function hreflang_tags(array $languages): string
+    {
+        $output = '';
+        foreach ($languages as $lang) {
+            $output .= '<link rel="alternate" hreflang="' . esc($lang['lang']) . '" href="' . esc($lang['url']) . '">' . "\n";
+        }
+        return $output;
+    }
+}
+

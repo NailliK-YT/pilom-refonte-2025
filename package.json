@@ -1,0 +1,17 @@
+{
+    "name": "pilom-assets",
+    "version": "1.0.0",
+    "description": "Build tools for Pilom frontend assets",
+    "private": true,
+    "scripts": {
+        "build": "node tools/minify.js",
+        "build:css": "node tools/minify.js --css-only",
+        "build:js": "node tools/minify.js --js-only",
+        "watch": "node tools/minify.js --watch"
+    },
+    "devDependencies": {
+        "clean-css": "^5.3.3",
+        "terser": "^5.26.0",
+        "chokidar": "^3.5.3"
+    }
+}
