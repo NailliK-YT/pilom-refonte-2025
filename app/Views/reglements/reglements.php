@@ -149,6 +149,8 @@
                         <?= csrf_field() ?>
                         <button type="submit" class="btn btn-danger">Supprimer</button>
                     </form>
+
+					<a href="<?= base_url('reglements/recu/' . $r['id']) ?>" class="btn btn-success">Reçu</a>
                 </div>
             </div>
 
