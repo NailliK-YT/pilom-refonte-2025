@@ -267,4 +267,55 @@ class ReglementController extends BaseController
             'autoPrint' => true
         ]);
     }
+
+
+	/**
+     * Export Bancaire (CSV)
+     */
+	public function export()
+	{
+        $companyId = $this->checkAuthAndGetCompanyId();
+        if (!$companyId) return;
+
+		$data = $this->reglementModel->getForBankExport($companyId);
+
+		// Construction du CSV
+		$filename = 'export_bancaire_' . date('Y-m-d_H-i-s') . '.csv';
+		$csv = fopen('php://temp', 'r+');
+
+		// En-têtes CSV
+		fputcsv($csv, [
+			'Date',
+			'Montant',
+			'Mode de paiement',
+			'Référence',
+			'N° Facture',
+			'Client',
+			'Entreprise'
+		], ';');
+
+		// Lignes du CSV
+		foreach ($data as $row) {
+			fputcsv($csv, [
+				$row['date_reglement'],
+				number_format($row['montant'], 2, ',', ''),
+				$row['mode_paiement'],
+				$row['reference'],
+				$row['numero_facture'],
+				$row['prenom'] . ' ' . $row['nom'],
+				$row['entreprise'],
+			], ';');
+		}
+
+		rewind($csv);
+		$output = stream_get_contents($csv);
+		fclose($csv);
+
+		// Envoi du fichier
+		return $this->response
+			->setHeader('Content-Type', 'text/csv')
+			->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+			->setBody($output);
+	}
+
 }

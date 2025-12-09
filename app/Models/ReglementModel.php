@@ -83,4 +83,27 @@ class ReglementModel extends Model
                     ->where('contact.company_id', $companyId)
                     ->first();
     }
+
+	/**
+	 * Récupère les règlements formatés pour l’export bancaire
+	 */
+	public function getForBankExport(string $companyId): array
+	{
+		return $this->select('
+				reglement.date_reglement,
+				reglement.montant,
+				reglement.mode_paiement,
+				reglement.reference,
+				facture.numero_facture,
+				contact.nom,
+				contact.prenom,
+				contact.entreprise
+			')
+			->join('facture', 'facture.id = reglement.facture_id')
+			->join('contact', 'contact.id = facture.contact_id')
+			->where('contact.company_id', $companyId)
+			->orderBy('reglement.date_reglement', 'ASC')
+			->findAll();
+	}
+
 }

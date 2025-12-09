@@ -338,6 +338,7 @@ $routes->group('reglements', ['filter' => 'auth'], function ($routes) {
     $routes->post('update/(:segment)', 'ReglementController::update/$1');
     $routes->post('delete/(:segment)', 'ReglementController::delete/$1');
 	$routes->get('recu/(:segment)', 'ReglementController::recu/$1');
+	$routes->get('export', 'ReglementController::export');
 });
 
 // ============================================
