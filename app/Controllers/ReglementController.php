@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\ReglementModel;
 use App\Models\FactureModel;
 use App\Models\TreasuryModel;
+use App\Models\ContactModel;
 use App\Libraries\NotificationService;
 
 class ReglementController extends BaseController
@@ -12,6 +13,7 @@ class ReglementController extends BaseController
     protected $reglementModel;
     protected $factureModel;
     protected $treasuryModel;
+	protected $contactModel;
     protected $notificationService;
 
     public function __construct()
@@ -19,6 +21,7 @@ class ReglementController extends BaseController
         $this->reglementModel = new ReglementModel();
         $this->factureModel   = new FactureModel();
         $this->treasuryModel  = new TreasuryModel();
+		$this->contactModel   = new ContactModel();
         $this->notificationService = new NotificationService();
     }
 
@@ -238,5 +241,30 @@ class ReglementController extends BaseController
         $this->reglementModel->delete($id);
 
         return redirect()->to('/reglements')->with('success', 'Règlement supprimé avec succès.');
+    }
+
+	/**
+     * Génération recu (Vue imprimable)
+     */
+    public function recu($id)
+    {
+        $companyId = $this->checkAuthAndGetCompanyId();
+        if (!$companyId) return;
+
+        // Vérifier que le règlement appartient à la company
+        $reglement = $this->reglementModel->findForCompany($id, $companyId);
+        if (!$reglement) {
+            return redirect()->to('/reglements')->with('error', 'Règlement introuvable.');
+        }
+
+        $facture = $this->factureModel->find($reglement['facture_id']);
+		$contact = $this->contactModel->find($facture['contact_id']);
+
+        return view('reglements/reglement_print', [
+            'reglement' => $reglement,
+            'facture' => $facture,
+			'contact' => $contact,
+            'autoPrint' => true
+        ]);
     }
 }
