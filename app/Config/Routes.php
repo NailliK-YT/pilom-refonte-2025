@@ -344,6 +344,7 @@ $routes->group('reglements', ['filter' => 'auth'], function ($routes) {
     $routes->match(['GET', 'POST'], 'edit/(:segment)', 'ReglementController::edit/$1');
     $routes->post('update/(:segment)', 'ReglementController::update/$1');
     $routes->post('delete/(:segment)', 'ReglementController::delete/$1');
+	$routes->get('recu/(:segment)', 'ReglementController::recu/$1');
 });
 
 // ============================================
