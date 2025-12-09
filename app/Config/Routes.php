@@ -19,6 +19,13 @@ $routes->get('cgu', 'PagesController::terms');
 $routes->get('confidentialite', 'PagesController::privacy');
 $routes->get('privacy', 'PagesController::privacy');
 
+// ============================================
+// SEO - SITEMAP & ROBOTS.TXT
+// ============================================
+$routes->get('sitemap.xml', 'SitemapController::index');
+$routes->get('sitemap', 'SitemapController::index');
+$routes->get('robots.txt', 'SitemapController::robots');
+
 // Routes d'authentification (AuthController)
 $routes->get('login', 'AuthController::login');
 $routes->post('login/attempt', 'AuthController::attemptLogin');
