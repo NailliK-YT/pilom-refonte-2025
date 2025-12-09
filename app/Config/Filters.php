@@ -37,6 +37,7 @@ class Filters extends BaseFilters
         'auth' => \App\Filters\AuthFilter::class,
         'role' => \App\Filters\RoleFilter::class,
         'redirect' => \App\Filters\RedirectFilter::class,
+        'perfoptimize' => \App\Filters\PerformanceFilter::class,
     ];
 
     /**
@@ -80,6 +81,7 @@ class Filters extends BaseFilters
             // 'invalidchars',
         ],
         'after' => [
+            'perfoptimize', // Performance optimization headers
             // 'honeypot',
             // 'secureheaders',
         ],

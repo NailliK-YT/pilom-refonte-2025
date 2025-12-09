@@ -1,0 +1,82 @@
+.devis-card {
+  background: var(--white,#fff);
+  border: 1px solid var(--border-color,#e2e8f0);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: .2s
+}
+.devis-card:hover {
+  border-color: var(--primary-color,#4e51c0);
+  box-shadow: 0 4px 12px rgba(78,81,192,.1)
+}
+.devis-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--light-gray,#f1f5f9);
+  border-bottom: 1px solid var(--border-color,#e2e8f0);
+  flex-wrap: wrap;
+  gap: 1rem
+}
+.devis-title {
+  font-weight: 600;
+  color: var(--dark-gray,#1e293b)
+}
+.statut {
+  display: inline-block;
+  padding: .25rem .75rem;
+  border-radius: 9999px;
+  font-size: .75rem;
+  font-weight: 600
+}
+.statut-gris {
+  background: #e2e8f0;
+  color: #475569
+}
+.statut-bleu {
+  background: #dbeafe;
+  color: #1d4ed8
+}
+.statut-vert {
+  background: #dcfce7;
+  color: #16a34a
+}
+.statut-orange {
+  background: #fed7aa;
+  color: #c2410c
+}
+.statut-rouge {
+  background: #fee2e2;
+  color: #dc2626
+}
+.devis-details {
+  display: grid;
+  gap: 1rem
+}
+.devis-detail .detail-label {
+  font-size: .75rem;
+  text-transform: uppercase;
+  color: var(--text-muted,#6b7280);
+  margin-bottom: .25rem
+}
+.devis-detail .detail-value {
+  font-weight: 500;
+  color: var(--dark-gray,#1e293b)
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end
+}
+.filter-group {
+  min-width: 150px
+}
+@media (max-width:768px) {
+  .devis-header {
+    flex-direction: column;
+    align-items: flex-start
+  }
+}

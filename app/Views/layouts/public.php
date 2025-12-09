@@ -34,9 +34,13 @@
     <meta name="twitter:image"
         content="<?= esc($seo['twitter_image'] ?? $seo['og_image'] ?? base_url('images/og-default.jpg')) ?>">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="<?= base_url('css/style.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/pages.css') ?>">
+    <!-- Performance: Preconnect for external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Stylesheets with versioning for cache busting -->
+    <link rel="stylesheet" href="<?= asset_url('css/style.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('css/pages.css') ?>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Schema.org Structured Data -->

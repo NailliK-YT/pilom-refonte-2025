@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= esc($title) ?> - Pilom</title>
-    <link rel="stylesheet" href="<?= base_url('css/style.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('css/profile.css') ?>">
+
+    <!-- Optimized asset loading with versioning -->
+    <link rel="stylesheet" href="<?= asset_url('css/style.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('css/profile.css') ?>">
 </head>
 
 <body>
@@ -61,7 +63,7 @@
         </div>
     </div>
 
-    <script src="<?= base_url('js/profile.js') ?>"></script>
+    <script src="<?= asset_url('js/profile.js') ?>" defer></script>
 </body>
 
 </html>
