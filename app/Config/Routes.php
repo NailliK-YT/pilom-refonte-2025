@@ -45,6 +45,7 @@ $routes->post('auth/2fa-verify', 'TwoFactorController::loginVerifyPost');
 $routes->get('account/2fa', 'TwoFactorController::index', ['filter' => 'auth']);
 $routes->get('account/2fa/setup', 'TwoFactorController::setup', ['filter' => 'auth']);
 $routes->post('account/2fa/verify', 'TwoFactorController::verify', ['filter' => 'auth']);
+$routes->get('account/2fa/disable', 'TwoFactorController::disableForm', ['filter' => 'auth']);
 $routes->post('account/2fa/disable', 'TwoFactorController::disable', ['filter' => 'auth']);
 $routes->get('account/2fa/backup-codes', 'TwoFactorController::showBackupCodes', ['filter' => 'auth']);
 $routes->post('account/2fa/regenerate-codes', 'TwoFactorController::regenerateBackupCodes', ['filter' => 'auth']);
@@ -359,8 +360,8 @@ $routes->group('reglements', ['filter' => 'auth'], function ($routes) {
     $routes->match(['GET', 'POST'], 'edit/(:segment)', 'ReglementController::edit/$1');
     $routes->post('update/(:segment)', 'ReglementController::update/$1');
     $routes->post('delete/(:segment)', 'ReglementController::delete/$1');
-	$routes->get('recu/(:segment)', 'ReglementController::recu/$1');
-	$routes->get('export', 'ReglementController::export');
+    $routes->get('recu/(:segment)', 'ReglementController::recu/$1');
+    $routes->get('export', 'ReglementController::export');
 });
 
 // ============================================
@@ -433,6 +434,57 @@ $routes->group('pour', function ($routes) {
     $routes->get('pme', 'Page::profile_pme');
     $routes->get('auto-entrepreneur', 'Page::profile_auto_entrepreneur');
     $routes->get('profession-liberale', 'Page::profile_profession_liberale');
+});
+
+// ============================================
+// MODULE BLOG PUBLIC
+// ============================================
+$routes->get('blog', 'BlogController::index');
+$routes->get('blog/feed', 'BlogController::feed');
+$routes->get('blog/search', 'BlogController::search');
+$routes->get('blog/categorie/(:segment)', 'BlogController::category/$1');
+$routes->get('blog/tag/(:segment)', 'BlogController::tag/$1');
+$routes->post('blog/newsletter/subscribe', 'BlogController::subscribeNewsletter');
+$routes->get('blog/newsletter/unsubscribe/(:segment)', 'BlogController::unsubscribeNewsletter/$1');
+$routes->get('blog/(:segment)', 'BlogController::show/$1');
+$routes->post('blog/(:segment)/comment', 'BlogController::comment/$1');
+
+// ============================================
+// MODULE BLOG ADMIN
+// ============================================
+$routes->group('admin/blog', ['filter' => 'auth'], function ($routes) {
+    // Articles
+    $routes->get('/', 'Blog\BlogAdminController::index');
+    $routes->get('create', 'Blog\BlogAdminController::create');
+    $routes->post('store', 'Blog\BlogAdminController::store');
+    $routes->get('edit/(:segment)', 'Blog\BlogAdminController::edit/$1');
+    $routes->post('update/(:segment)', 'Blog\BlogAdminController::update/$1');
+    $routes->post('delete/(:segment)', 'Blog\BlogAdminController::delete/$1');
+    $routes->post('publish/(:segment)', 'Blog\BlogAdminController::publish/$1');
+    $routes->get('preview/(:segment)', 'Blog\BlogAdminController::preview/$1');
+    $routes->post('duplicate/(:segment)', 'Blog\BlogAdminController::duplicate/$1');
+    $routes->get('versions/(:segment)', 'Blog\BlogAdminController::versions/$1');
+    $routes->post('restore/(:segment)', 'Blog\BlogAdminController::restore/$1');
+    $routes->get('stats', 'Blog\BlogAdminController::stats');
+    $routes->post('upload-media', 'Blog\BlogAdminController::uploadMedia');
+    $routes->post('analyze-seo', 'Blog\BlogAdminController::analyzeSeo');
+
+    // Categories
+    $routes->get('categories', 'Blog\BlogCategoryAdminController::index');
+    $routes->get('categories/create', 'Blog\BlogCategoryAdminController::create');
+    $routes->post('categories/create', 'Blog\BlogCategoryAdminController::create');
+    $routes->get('categories/edit/(:segment)', 'Blog\BlogCategoryAdminController::edit/$1');
+    $routes->post('categories/edit/(:segment)', 'Blog\BlogCategoryAdminController::edit/$1');
+    $routes->post('categories/delete/(:segment)', 'Blog\BlogCategoryAdminController::delete/$1');
+
+    // Comments
+    $routes->get('comments', 'Blog\BlogCommentAdminController::index');
+    $routes->get('comments/pending', 'Blog\BlogCommentAdminController::pending');
+    $routes->post('comments/approve/(:segment)', 'Blog\BlogCommentAdminController::approve/$1');
+    $routes->post('comments/spam/(:segment)', 'Blog\BlogCommentAdminController::spam/$1');
+    $routes->post('comments/trash/(:segment)', 'Blog\BlogCommentAdminController::trash/$1');
+    $routes->post('comments/delete/(:segment)', 'Blog\BlogCommentAdminController::delete/$1');
+    $routes->post('comments/bulk-approve', 'Blog\BlogCommentAdminController::bulkApprove');
 });
 
 // ==========================================

@@ -84,9 +84,10 @@
                 <span>J'ai sauvegardé mes codes de secours en lieu sûr</span>
             </label>
 
-            <a href="<?= base_url('account/security') ?>" class="btn btn-primary btn-lg" id="continue-btn" disabled>
+            <button type="button" class="btn btn-primary btn-lg" id="continue-btn" disabled
+                onclick="window.location.href='<?= base_url('account/security') ?>'">
                 Continuer vers les paramètres
-            </a>
+            </button>
         </div>
     </div>
 </div>
@@ -211,12 +212,23 @@
     #continue-btn {
         width: 100%;
         max-width: 300px;
+        transition: all 0.3s ease;
     }
 
     #continue-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-        pointer-events: none;
+        background-color: #94a3b8 !important;
+        border-color: #94a3b8 !important;
+    }
+
+    #continue-btn:not(:disabled) {
+        background-color: var(--primary-color, #4e51c0);
+    }
+
+    #continue-btn:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(78, 81, 192, 0.4);
     }
 
     @media print {

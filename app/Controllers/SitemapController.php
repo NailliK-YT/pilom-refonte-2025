@@ -67,7 +67,62 @@ class SitemapController extends BaseController
             );
         }
 
+        // Blog URLs
+        $xml .= $this->generateBlogUrls();
+
         $xml .= '</urlset>';
+
+        return $xml;
+    }
+
+    /**
+     * Generate blog URLs for sitemap
+     */
+    protected function generateBlogUrls(): string
+    {
+        $xml = '';
+
+        // Blog main page
+        $xml .= $this->generateUrlEntry(base_url('blog'), 'daily', 0.8);
+
+        // Blog articles
+        $articleModel = new \App\Models\BlogArticleModel();
+        $articles = $articleModel->getForSitemap();
+
+        foreach ($articles as $article) {
+            $xml .= $this->generateUrlEntry(
+                base_url('blog/' . $article['slug']),
+                'weekly',
+                0.7,
+                $article['updated_at'] ?? $article['published_at']
+            );
+        }
+
+        // Blog categories
+        $categoryModel = new \App\Models\BlogCategoryModel();
+        $categories = $categoryModel->getActive();
+
+        foreach ($categories as $category) {
+            $xml .= $this->generateUrlEntry(
+                base_url('blog/categorie/' . $category['slug']),
+                'weekly',
+                0.6
+            );
+        }
+
+        // Blog tags (popular ones)
+        $tagModel = new \App\Models\BlogTagModel();
+        $tags = $tagModel->getPopular(20);
+
+        foreach ($tags as $tag) {
+            if (($tag['article_count'] ?? 0) > 0) {
+                $xml .= $this->generateUrlEntry(
+                    base_url('blog/tag/' . $tag['slug']),
+                    'weekly',
+                    0.5
+                );
+            }
+        }
 
         return $xml;
     }

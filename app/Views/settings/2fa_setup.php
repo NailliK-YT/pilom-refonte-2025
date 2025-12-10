@@ -9,11 +9,7 @@
         <p class="subtitle">Scannez le QR code avec votre application d'authentification</p>
     </div>
 
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger">
-            <?= esc(session()->getFlashdata('error')) ?>
-        </div>
-    <?php endif; ?>
+
 
     <div class="setup-2fa-container">
         <div class="setup-steps">
@@ -80,12 +76,25 @@
                     <h3>Entrez le code de vérification</h3>
                     <p>Entrez le code à 6 chiffres affiché dans votre application :</p>
 
-                    <form action="<?= base_url('account/2fa/verify') ?>" method="post" class="verify-form">
+                    <?php if (session()->getFlashdata('error')): ?>
+                        <div class="code-error">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <?= esc(session()->getFlashdata('error')) ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="<?= base_url('account/2fa/verify') ?>" method="post" class="verify-form"
+                        id="verify-form">
                         <?= csrf_field() ?>
                         <div class="code-input-group">
                             <input type="text" name="code" id="verification-code" maxlength="6" pattern="\d{6}"
-                                inputmode="numeric" autocomplete="one-time-code" placeholder="000000" required
-                                autofocus>
+                                inputmode="numeric" autocomplete="one-time-code" placeholder="000000" required autofocus
+                                class="<?= session()->getFlashdata('error') ? 'has-error' : '' ?>">
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -359,25 +368,62 @@
     .info-card.warning p {
         color: #92400e;
     }
+
+    /* Error styles */
+    .code-error {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        color: #dc2626;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .code-error svg {
+        flex-shrink: 0;
+    }
+
+    .code-input-group input.has-error {
+        border-color: #dc2626;
+        animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-5px);
+        }
+
+        75% {
+            transform: translateX(5px);
+        }
+    }
 </style>
 
 <script>
-    // Auto-focus and format code input
+    // Format code input (no auto-submit)
     document.addEventListener('DOMContentLoaded', function () {
         const codeInput = document.getElementById('verification-code');
 
         codeInput.addEventListener('input', function (e) {
-            // Remove non-digits
+            // Remove non-digits only
             this.value = this.value.replace(/\D/g, '').slice(0, 6);
-
-            // Auto-submit when 6 digits entered
-            if (this.value.length === 6) {
-                // Small delay to let user see the full code
-                setTimeout(() => {
-                    this.form.submit();
-                }, 300);
-            }
         });
+
+        // Scroll to form if there's an error
+        const errorEl = document.querySelector('.code-error');
+        if (errorEl) {
+            errorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     });
 </script>
 <?= $this->endSection() ?>

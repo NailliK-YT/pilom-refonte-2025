@@ -136,7 +136,25 @@ class TwoFactorController extends BaseController
     }
 
     /**
-     * Disable 2FA (with confirmation dialog on frontend)
+     * Show disable 2FA confirmation form
+     */
+    public function disableForm()
+    {
+        $userId = session()->get('user_id');
+        $user = $this->userModel->find($userId);
+
+        if (!$user || !$user['two_factor_enabled']) {
+            return redirect()->to('/account/security')
+                ->with('error', 'L\'authentification à deux facteurs n\'est pas activée.');
+        }
+
+        return view('settings/2fa_disable', [
+            'email' => $user['email']
+        ]);
+    }
+
+    /**
+     * Disable 2FA (requires password confirmation)
      */
     public function disable()
     {
@@ -146,6 +164,32 @@ class TwoFactorController extends BaseController
         if (!$user) {
             return redirect()->to('/account/security')
                 ->with('error', 'Utilisateur non trouvé.');
+        }
+
+        if (!$user['two_factor_enabled']) {
+            return redirect()->to('/account/security')
+                ->with('error', 'L\'authentification à deux facteurs n\'est pas activée.');
+        }
+
+        // Validate password
+        $password = $this->request->getPost('password');
+
+        if (empty($password)) {
+            return redirect()->back()
+                ->with('error', 'Le mot de passe est requis pour désactiver l\'A2F.');
+        }
+
+        // Verify password
+        if (!password_verify($password, $user['password_hash'])) {
+            // Log failed attempt
+            $this->auditModel->log('two_factor_disable_failed', [
+                'user_id' => $userId,
+                'details' => 'Failed password verification for 2FA disable',
+                'ip' => $this->request->getIPAddress()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Mot de passe incorrect.');
         }
 
         // Disable 2FA
