@@ -135,7 +135,7 @@
                     <tr>
                         <td>
                             <?php if (!empty($product['image_path'])): ?>
-                                <img src="<?= base_url('writable/uploads/' . $product['image_path']) ?>" 
+                                <img src="<?= base_url('uploads/' . $product['image_path']) ?>" 
                                      alt="<?= esc($product['name']) ?>"
                                      style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
                             <?php else: ?>
@@ -149,7 +149,7 @@
                         <td><?= esc($product['tva_rate'] ?? 'N/A') ?> %</td>
                         <td><strong><?= number_format($product['price_ttc'] ?? ($product['price_ht'] * 1.2), 2, ',', ' ') ?> €</strong></td>
                         <td>
-                            <?php if ($product['is_archived'] ?? false): ?>
+                            <?php if (($product['is_archived'] ?? 'f') === 't'): ?>
                                 <span class="badge badge-danger">Archivé</span>
                             <?php else: ?>
                                 <span class="badge badge-success">Actif</span>
@@ -165,7 +165,7 @@
                                   style="display: inline;">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-sm btn-danger">
-                                    <?= ($product['is_archived'] ?? false) ? 'Restaurer' : 'Archiver' ?>
+                                    <?= ($product['is_archived'] ?? 'f') === 't' ? 'Restaurer' : 'Archiver' ?>
                                 </button>
                             </form>
                         </td>

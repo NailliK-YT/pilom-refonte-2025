@@ -652,7 +652,7 @@
                                 <span class="price-value" id="display-tva">0,00 €</span>
                             </div>
                             <div class="price-row">
-                                <span class="price-label">Prix TTC</span>
+                                <span class="price-label">P	rix TTC</span>
                                 <span class="price-value highlight" id="display-ttc">0,00 €</span>
                             </div>
                         </div>
@@ -727,7 +727,7 @@
                         >
                             <?php if (isset($product['image_path']) && !empty($product['image_path'])): ?>
                                 <div class="image-preview-wrapper" id="imagePreview">
-                                    <img src="<?= base_url('writable/uploads/' . $product['image_path']) ?>" alt="Aperçu">
+                                    <img src="<?= base_url('uploads/' . $product['image_path']) ?>" alt="Aperçu">
                                     <button type="button" class="image-remove-btn" onclick="removeImage(event)">
                                         ✕
                                     </button>

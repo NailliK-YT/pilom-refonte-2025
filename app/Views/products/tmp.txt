@@ -1,0 +1,44 @@
+<td class="table-actions">
+	<a href="<?= base_url('products/show/' . $product['id']) ?>" 
+		class="btn btn-sm btn-outline">Voir</a>
+	<a href="<?= base_url('products/edit/' . $product['id']) ?>" 
+		class="btn btn-sm btn-outline">Modifier</a>
+	<form method="post" 
+			action="<?= base_url('products/archive/' . $product['id']) ?>"
+			style="display: inline;">
+		<?= csrf_field() ?>
+		<button type="submit" class="btn btn-sm btn-danger">
+			<?= ($product['is_archived'] ?? false) ? 'Restaurer' : 'Archiver' ?>
+		</button>
+	</form>
+</td>
+
+// Produits
+$routes->group('products', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'Products::index');
+    $routes->match(['GET', 'POST'], 'create', 'Products::create');
+    $routes->get('show/(:segment)', 'Products::show/$1');
+    $routes->match(['GET', 'POST'], 'edit/(:segment)', 'Products::edit/$1');
+    $routes->post('archive/(:segment)', 'Products::archive/$1');
+    $routes->post('bulk-archive', 'Products::bulkArchive');
+    $routes->post('calculate-price', 'Products::calculatePrice'); // AJAX
+});
+
+    /**
+     * Archive un produit (suppression logique)
+     * 
+     * @param string $id ID du produit
+     */
+    public function archive(string $id): RedirectResponse
+    {
+        try {
+            $this->productModel->archiveProduct($id);
+
+            return redirect()->to('/products')
+                ->with('success', 'Produit archivé avec succès');
+        } catch (\Exception $e) {
+            log_message('error', 'Erreur archivage produit: ' . $e->getMessage());
+            return redirect()->to('/products')
+                ->with('error', 'Une erreur est survenue lors de l\'archivage du produit');
+        }
+    }

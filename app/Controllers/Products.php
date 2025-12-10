@@ -187,6 +187,7 @@ class Products extends BaseController
             // Traiter l'upload d'image
             $imagePath = $this->handleImageUpload();
 
+
             // Préparer les données du produit
             $productData = [
                 'name' => $this->request->getPost('name'),
@@ -324,18 +325,23 @@ class Products extends BaseController
      * @param string $id ID du produit
      */
     public function archive(string $id): RedirectResponse
-    {
-        try {
-            $this->productModel->archiveProduct($id);
+	{
+		try {
+			$newStatus = $this->productModel->toggleArchive($id);
+			
 
-            return redirect()->to('/products')
-                ->with('success', 'Produit archivé avec succès');
-        } catch (\Exception $e) {
-            log_message('error', 'Erreur archivage produit: ' . $e->getMessage());
-            return redirect()->to('/products')
-                ->with('error', 'Une erreur est survenue lors de l\'archivage du produit');
-        }
-    }
+			return redirect()->to('/products')
+				->with('success', $newStatus
+					? 'Produit archivé avec succès'
+					: 'Produit restauré avec succès'
+				);
+
+		} catch (\Exception $e) {
+			log_message('error', 'Erreur archivage produit: ' . $e->getMessage());
+			return redirect()->to('/products')
+				->with('error', 'Une erreur est survenue lors de l\'archivage du produit');
+		}
+	}
 
     /**
      * Archive plusieurs produits en une fois
@@ -405,7 +411,8 @@ class Products extends BaseController
         // Créer le répertoire de destination avec structure année/mois
         $year = date('Y');
         $month = date('m');
-        $uploadPath = WRITEPATH . "uploads/products/$year/$month";
+        //$uploadPath = WRITEPATH . "uploads/products/$year/$month";
+		$uploadPath = FCPATH . "uploads/products/$year/$month";
 
         if (!is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
