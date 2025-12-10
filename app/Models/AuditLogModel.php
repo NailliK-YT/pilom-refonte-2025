@@ -42,9 +42,15 @@ class AuditLogModel extends Model
         $session = session();
         $request = \Config\Services::request();
 
+        // Get user_id, ensuring empty strings become null for UUID column
+        $userId = $context['user_id'] ?? $session->get('user_id');
+        if (empty($userId)) {
+            $userId = null;
+        }
+
         $data = [
-            'user_id' => $context['user_id'] ?? $session->get('user_id'),
-            'company_id' => $context['company_id'] ?? $session->get('company_id'),
+            'user_id' => $userId,
+            'company_id' => $context['company_id'] ?? $session->get('company_id') ?: null,
             'action' => $action,
             'entity_type' => $context['entity_type'] ?? null,
             'entity_id' => $context['entity_id'] ?? null,
@@ -60,10 +66,10 @@ class AuditLogModel extends Model
     /**
      * Log a login event
      */
-    public function logLogin(string $userId, bool $success = true, ?string $reason = null): bool
+    public function logLogin(?string $userId, bool $success = true, ?string $reason = null): bool
     {
         return $this->log($success ? 'auth.login' : 'auth.login_failed', [
-            'user_id' => $userId,
+            'user_id' => $userId ?: null, // Ensure empty strings become null
             'new_values' => $reason ? ['reason' => $reason] : null,
         ]);
     }

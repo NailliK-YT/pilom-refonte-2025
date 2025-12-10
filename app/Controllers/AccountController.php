@@ -31,6 +31,9 @@ class AccountController extends BaseController
             return redirect()->to('/login')->with('error', 'Vous devez être connecté.');
         }
 
+        // Get user's full data including 2FA status
+        $user = $this->userModel->find($userId);
+
         // Get recent login
         $recentLogins = $this->loginHistoryModel->getHistory($userId, 1);
         $lastLogin = !empty($recentLogins) ? $recentLogins[0] : null;
@@ -43,7 +46,10 @@ class AccountController extends BaseController
             'title' => 'Sécurité du compte',
             'lastLogin' => $lastLogin,
             'deletionRequest' => $deletionRequest,
-            'daysRemaining' => $daysRemaining
+            'daysRemaining' => $daysRemaining,
+            // 2FA status
+            'twoFactorEnabled' => !empty($user['two_factor_enabled']) && !empty($user['two_factor_secret']),
+            'twoFactorEnabledAt' => $user['two_factor_enabled_at'] ?? null
         ];
 
         return view('account/security', $data);

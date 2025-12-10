@@ -32,7 +32,13 @@ class UserModel extends Model
         'status',
         'last_login',
         'password_reset_token',
-        'password_reset_expires'
+        'password_reset_expires',
+        // 2FA fields
+        'two_factor_secret',
+        'two_factor_enabled',
+        'two_factor_backup_codes',
+        'two_factor_enabled_at',
+        'two_factor_recovery_at'
     ];
 
     protected bool $allowEmptyInserts = false;

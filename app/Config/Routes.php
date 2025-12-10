@@ -37,6 +37,21 @@ $routes->post('forgot-password', 'AuthController::sendResetLink');
 $routes->get('reset-password/(:any)', 'AuthController::resetPassword/$1');
 $routes->post('reset-password', 'AuthController::updatePassword');
 
+// Two-Factor Authentication routes
+$routes->get('auth/2fa-verify', 'TwoFactorController::loginVerify');
+$routes->post('auth/2fa-verify', 'TwoFactorController::loginVerifyPost');
+
+// 2FA settings routes (authenticated) - using /account/2fa to match existing structure
+$routes->get('account/2fa', 'TwoFactorController::index', ['filter' => 'auth']);
+$routes->get('account/2fa/setup', 'TwoFactorController::setup', ['filter' => 'auth']);
+$routes->post('account/2fa/verify', 'TwoFactorController::verify', ['filter' => 'auth']);
+$routes->post('account/2fa/disable', 'TwoFactorController::disable', ['filter' => 'auth']);
+$routes->get('account/2fa/backup-codes', 'TwoFactorController::showBackupCodes', ['filter' => 'auth']);
+$routes->post('account/2fa/regenerate-codes', 'TwoFactorController::regenerateBackupCodes', ['filter' => 'auth']);
+
+// 2FA required for admins
+$routes->get('require-2fa', 'TwoFactorController::requireSetup', ['filter' => 'auth']);
+
 // Company selection (for multi-company users)
 $routes->get('select-company', 'CompanySwitchController::select', ['filter' => 'auth']);
 $routes->post('switch-company/(:segment)', 'CompanySwitchController::switch/$1', ['filter' => 'auth']);
@@ -344,7 +359,7 @@ $routes->group('reglements', ['filter' => 'auth'], function ($routes) {
     $routes->match(['GET', 'POST'], 'edit/(:segment)', 'ReglementController::edit/$1');
     $routes->post('update/(:segment)', 'ReglementController::update/$1');
     $routes->post('delete/(:segment)', 'ReglementController::delete/$1');
-	$routes->get('recu/(:segment)', 'ReglementController::recu/$1');
+    $routes->get('recu/(:segment)', 'ReglementController::recu/$1');
 });
 
 // ============================================
