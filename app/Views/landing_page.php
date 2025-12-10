@@ -15,6 +15,32 @@
         </div>
     </section>
 
+	<!-- Demo Video Section -->
+    <section id="demo" class="demo-section">
+        <div class="demo-container">
+
+            <div class="demo-text">
+                <h2>Découvrez Pilom en action</h2>
+                <p class="subtitle">
+                    Une démonstration complète de la création d’un devis, d’une facture et du suivi des règlements.
+                </p>
+            </div>
+
+            <div class="demo-video-wrapper">
+                <iframe 
+                    class="demo-video"
+                    src="https://www.youtube.com/embed/VIDEO_ID?rel=0&modestbranding=1"
+                    title="Démonstration Pilom"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+        </div>
+    </section>
+
+	<!-- Features Section -->
     <section id="features" class="features">
         <h2>Tout pour réussir</h2>
         <p>Des outils puissants conçus pour les entrepreneurs modernes</p>
@@ -35,6 +61,40 @@
                 <h3>Tableau de Bord</h3>
                 <p>Visualisez votre chiffre d'affaires et votre trésorerie en temps réel.</p>
             </div>
+        </div>
+    </section>
+
+	<!-- Testimonials Section -->
+    <section class="testimonials">
+        <h2>Ils nous font confiance</h2>
+        <p class="subtitle">Découvrez ce que nos utilisateurs pensent de Pilom</p>
+
+        <div class="testimonials-grid">
+
+            <div class="testimonial-card">
+                <p class="quote">
+                    “Pilom a transformé ma gestion quotidienne. Je gagne au moins 5 heures par semaine sur l’administratif.”
+                </p>
+                <p class="author">Marie Dubois</p>
+                <p class="role">Plombière - MD Plomberie</p>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="quote">
+                    “Simple, efficace et exactement ce dont mon entreprise avait besoin. Le suivi de trésorerie est remarquable.”
+                </p>
+                <p class="author">Thomas Martin</p>
+                <p class="role">Consultant - TM Consulting</p>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="quote">
+                    “Interface intuitive qui ne nécessite aucune formation. Même ma comptable est impressionnée par l’organisation.”
+                </p>
+                <p class="author">Sophie Laurent</p>
+                <p class="role">Gérante - Café du Coin</p>
+            </div>
+
         </div>
     </section>
 <?= $this->endSection() ?>

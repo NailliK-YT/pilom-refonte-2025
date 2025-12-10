@@ -81,12 +81,18 @@
         <h1>Gestion des règlements</h1>
         <p class="text-muted">Suivez les paiements de vos factures</p>
     </div>
-    <a href="<?= base_url('reglements/create') ?>" class="btn btn-primary">
+	<div>
+	    <a href="<?= base_url('reglements/create') ?>" class="btn btn-primary">
         <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
         </svg>
         Nouveau règlement
-    </a>
+		</a>
+		<a href="<?= base_url('reglements/export') ?>" class="btn btn-secondary">
+			Export bancaire
+		</a>
+	</div>
+
 </div>
 
 <div class="card">
