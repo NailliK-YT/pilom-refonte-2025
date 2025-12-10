@@ -41,7 +41,11 @@
     <!-- Stylesheets with versioning for cache busting -->
     <link rel="stylesheet" href="<?= asset_url('css/style.css') ?>">
     <link rel="stylesheet" href="<?= asset_url('css/pages.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('css/blog.css') ?>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Additional page-specific styles -->
+    <?= $this->renderSection('styles') ?>
 
     <!-- Schema.org Structured Data -->
     <?= $schema ?? '' ?>
@@ -85,6 +89,7 @@
             <a href="<?= base_url('/') ?>#pricing">Tarifs</a>
             <a href="<?= base_url('about') ?>">À propos</a>
             <a href="<?= base_url('faq') ?>">FAQ</a>
+            <a href="<?= base_url('blog') ?>">Blog</a>
 
             <div class="dropdown">
                 <a href="#" class="dropdown-trigger">Légal</a>

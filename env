@@ -8,3 +8,11 @@ database.default.username = anas
 database.default.password = sana
 database.default.DBDriver = Postgre
 database.default.port = 5432
+
+#--------------------------------------------------------------------
+# reCAPTCHA v3 Configuration
+# Get keys from: https://www.google.com/recaptcha/admin
+#--------------------------------------------------------------------
+# RECAPTCHA_SITE_KEY = 'your-site-key-here'
+# RECAPTCHA_SECRET_KEY = 'your-secret-key-here'
+# RECAPTCHA_ENABLED = true

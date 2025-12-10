@@ -16,6 +16,7 @@
     <!-- Stylesheets with versioning for cache busting -->
     <link rel="stylesheet" href="<?= asset_url('css/style.css') ?>">
     <link rel="stylesheet" href="<?= asset_url('css/dashboard.css') ?>">
+    <link rel="stylesheet" href="<?= asset_url('css/admin-blog.css') ?>">
     <?= $this->renderSection('styles') ?>
 </head>
 
@@ -213,6 +214,50 @@
                 </a>
             </div>
 
+            <!-- Blog Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Blog</div>
+
+                <a href="<?= base_url('admin/blog') ?>"
+                    class="sidebar-link <?= strpos($currentPath, 'admin/blog') !== false ? 'active' : '' ?>">
+                    <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z"
+                            clip-rule="evenodd" />
+                        <path d="M15 7h1a2 2 0 012 2v5.5a1.5 1.5 0 01-3 0V7z" />
+                    </svg>
+                    <span>Gérer les articles</span>
+                </a>
+
+                <a href="<?= base_url('admin/blog/categories') ?>"
+                    class="sidebar-link sidebar-sublink <?= strpos($currentPath, 'blog/categories') !== false ? 'active' : '' ?>">
+                    <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+                    </svg>
+                    <span>Catégories</span>
+                </a>
+
+                <a href="<?= base_url('admin/blog/comments') ?>"
+                    class="sidebar-link sidebar-sublink <?= strpos($currentPath, 'blog/comments') !== false ? 'active' : '' ?>">
+                    <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span>Commentaires</span>
+                </a>
+
+                <a href="<?= base_url('blog') ?>" target="_blank" class="sidebar-link sidebar-sublink">
+                    <svg class="sidebar-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                            d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+                        <path
+                            d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+                    </svg>
+                    <span>Voir le blog</span>
+                </a>
+            </div>
+
             <div class="sidebar-divider"></div>
 
             <!-- Profile & Settings -->
@@ -404,14 +449,22 @@
             <div class="user-profile-mini">
                 <div class="user-avatar">
                     <?php
-                    $userEmail = session()->get('user_email') ?? 'U';
-                    $userInitial = strtoupper(substr($userEmail, 0, 1));
+                    $firstName = session()->get('first_name') ?? '';
+                    $lastName = session()->get('last_name') ?? '';
+                    $email = session()->get('email') ?? 'U';
+                    $userInitial = $firstName ? strtoupper(substr($firstName, 0, 1)) : strtoupper(substr($email, 0, 1));
                     ?>
                     <span><?= $userInitial ?></span>
                 </div>
                 <div class="user-info">
-                    <span class="user-name"><?= esc(session()->get('user_name') ?? 'Utilisateur') ?></span>
-                    <span class="user-email"><?= esc(session()->get('user_email') ?? 'email@exemple.fr') ?></span>
+                    <?php
+                    $displayName = trim($firstName . ' ' . $lastName);
+                    if (empty($displayName)) {
+                        $displayName = explode('@', $email)[0]; // Use part before @ as fallback
+                    }
+                    ?>
+                    <span class="user-name"><?= esc($displayName) ?></span>
+                    <span class="user-email"><?= esc($email) ?></span>
                 </div>
                 <a href="<?= base_url('logout') ?>" class="logout-btn" title="Déconnexion">
                     <svg viewBox="0 0 20 20" fill="currentColor">

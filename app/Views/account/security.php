@@ -155,14 +155,9 @@
                 <a href="<?= base_url('account/2fa/backup-codes') ?>" class="btn btn-outline">
                     Voir les codes de secours
                 </a>
-                <form action="<?= base_url('account/2fa/disable') ?>" method="post"
-                    style="display: inline-block; margin-left: 0.5rem;"
-                    onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver l\\'authentification à deux facteurs ?');">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-danger">
-                        Désactiver la 2FA
-                    </button>
-                </form>
+                <a href="<?= base_url('account/2fa/disable') ?>" class="btn btn-danger" style="margin-left: 0.5rem;">
+                    Désactiver la 2FA
+                </a>
             </div>
         <?php else: ?>
             <div class="card-footer">
