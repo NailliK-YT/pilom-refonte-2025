@@ -38,6 +38,8 @@ class Filters extends BaseFilters
         'role' => \App\Filters\RoleFilter::class,
         'redirect' => \App\Filters\RedirectFilter::class,
         'perfoptimize' => \App\Filters\PerformanceFilter::class,
+        'loginattempt' => \App\Filters\LoginAttemptFilter::class,
+        'securityheaders' => \App\Filters\SecurityHeadersFilter::class,
     ];
 
     /**
@@ -82,8 +84,8 @@ class Filters extends BaseFilters
         ],
         'after' => [
             'perfoptimize', // Performance optimization headers
+            'securityheaders', // HTTP security headers (CSP, HSTS, etc.)
             // 'honeypot',
-            // 'secureheaders',
         ],
     ];
 
@@ -111,5 +113,7 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        'loginattempt' => ['before' => ['login/attempt']],
+    ];
 }

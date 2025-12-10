@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\AuditLogModel;
 use App\Models\UserCompanyModel;
+use App\Models\LoginAttemptModel;
 
 /**
  * AuthController - Enhanced with password reset, audit logging, and user status checks
@@ -14,11 +15,13 @@ class AuthController extends BaseController
 {
     protected $userModel;
     protected $auditModel;
+    protected $loginAttemptModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->auditModel = new AuditLogModel();
+        $this->loginAttemptModel = new LoginAttemptModel();
         helper(['form', 'url', 'cookie']);
     }
 
@@ -73,6 +76,12 @@ class AuthController extends BaseController
 
         if (!$user) {
             $this->auditModel->logLogin('', false, 'User not found: ' . $email);
+            // Record failed attempt for brute-force protection
+            $this->loginAttemptModel->recordAttempt(
+                $this->request->getIPAddress(),
+                $email,
+                $this->request->getUserAgent()->getAgentString()
+            );
             return redirect()->back()->withInput()->with('error', 'Email ou mot de passe incorrect.');
         }
 
@@ -91,8 +100,23 @@ class AuthController extends BaseController
         // Vérification du mot de passe
         if (!$this->userModel->verifyPassword($password, $user['password_hash'])) {
             $this->auditModel->logLogin($user['id'], false, 'Invalid password');
-            return redirect()->back()->withInput()->with('error', 'Email ou mot de passe incorrect.');
+            // Record failed attempt for brute-force protection
+            $blocked = $this->loginAttemptModel->recordAttempt(
+                $this->request->getIPAddress(),
+                $email,
+                $this->request->getUserAgent()->getAgentString()
+            );
+
+            $errorMessage = 'Email ou mot de passe incorrect.';
+            if ($blocked) {
+                $blockMinutes = LoginAttemptModel::getBlockDurationMinutes();
+                $errorMessage = "Trop de tentatives. Compte bloqué pour {$blockMinutes} minutes.";
+            }
+            return redirect()->back()->withInput()->with('error', $errorMessage);
         }
+
+        // Reset login attempts on successful authentication
+        $this->loginAttemptModel->resetAttempts($this->request->getIPAddress(), $email);
 
         // Update last login
         $this->userModel->updateLastLogin($user['id']);
@@ -124,6 +148,32 @@ class AuthController extends BaseController
             $sessionData['company_id'] = $user['company_id'];
             $sessionData['role'] = $user['role'] ?? 'user';
         }
+
+        // ===== TWO-FACTOR AUTHENTICATION CHECK =====
+        // Check if 2FA is FULLY configured (enabled + secret exists)
+        // Note: PostgreSQL may return 't' or '1' for boolean true
+        $has2FAConfigured = !empty($user['two_factor_enabled'])
+            && !empty($user['two_factor_secret']);
+
+        if ($has2FAConfigured) {
+            // Store the pending session data temporarily
+            session()->set([
+                '2fa_pending' => true,
+                '2fa_pending_user_id' => $user['id'],
+                '2fa_pending_session' => $sessionData,
+            ]);
+
+            return redirect()->to('/auth/2fa-verify');
+        }
+
+        // If admin/owner without 2FA, remind them to set it up
+        $userRole = $sessionData['user_role'] ?? $user['role'] ?? 'user';
+        if (in_array($userRole, ['admin', 'owner']) && empty($user['two_factor_enabled'])) {
+            session()->set($sessionData);
+            session()->setFlashdata('warning', 'Pour une sécurité optimale, veuillez activer l\'authentification à deux facteurs.');
+            return redirect()->to('/require-2fa');
+        }
+        // ===== END 2FA CHECK =====
 
         session()->set($sessionData);
 
