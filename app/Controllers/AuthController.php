@@ -8,6 +8,7 @@ use App\Models\AuditLogModel;
 use App\Models\UserCompanyModel;
 use App\Models\LoginAttemptModel;
 use App\Models\LoginHistoryModel;
+use App\Models\NotificationModel;
 
 /**
  * AuthController - Enhanced with password reset, audit logging, and user status checks
@@ -19,12 +20,15 @@ class AuthController extends BaseController
     protected $loginAttemptModel;
 	protected $loginHistoryModel;
 
+	protected $notificationModel;
+
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->auditModel = new AuditLogModel();
         $this->loginAttemptModel = new LoginAttemptModel();
 		$this->loginHistoryModel = new LoginHistoryModel();
+		$this->notificationModel = new NotificationModel();
         helper(['form', 'url', 'cookie']);
     }
 
@@ -80,6 +84,15 @@ class AuthController extends BaseController
 
         // Recherche de l'utilisateur
         $user = $this->userModel->findByEmail($email);
+		$failedAttempts = $this->loginHistoryModel->getFailedAttempts($user['id'], 30);
+		$nbFailedAttempts = count($failedAttempts);
+
+		if ($nbFailedAttempts >= 3) {
+			$this->notificationModel->notifySuspiciousActivity(
+				$user['id'],
+				"Plusieurs tentatives de connexion échouées ({$nbFailedAttempts}) sur 30 minutes."
+			);
+		}
 
         if (!$user) {
             $this->auditModel->logLogin('', false, 'User not found: ' . $email);

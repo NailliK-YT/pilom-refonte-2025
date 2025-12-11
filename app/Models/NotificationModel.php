@@ -191,6 +191,24 @@ class NotificationModel extends Model
         );
     }
 
+	/**
+	 * Notifier une activité suspecte
+	 */
+	public function notifySuspiciousActivity(string $userId, string $activityDescription, string $companyId = null): bool
+	{
+		return $this->createNotification(
+			$userId,
+			'alert',
+			'Activité suspecte détectée',
+			"Une activité suspecte a été détectée : {$activityDescription}",
+			[
+				'company_id' => $companyId,
+				'link' => '/security', // page de surveillance/admin
+				'priority' => 'urgent'
+			]
+		);
+	}
+
     /**
      * Delete old read notifications (cleanup)
      */
