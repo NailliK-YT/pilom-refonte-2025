@@ -113,8 +113,8 @@ $routes->group('account/rgpd', ['filter' => 'auth'], function ($routes) {
 });
 
 // Routes existantes
-$routes->match(['GET', 'POST'], 'login-old', 'Auth::login');
-$routes->get('logout-old', 'Auth::logout');
+//$routes->match(['GET', 'POST'], 'login-old', 'Auth::login');
+//$routes->get('logout-old', 'Auth::logout');
 $routes->get('dashboard', 'Dashboard::index', ['filter' => 'auth']);
 
 // Multi-step registration routes

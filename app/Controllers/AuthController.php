@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\AuditLogModel;
 use App\Models\UserCompanyModel;
+use App\Models\LoginHistoryModel;
 
 /**
  * AuthController - Enhanced with password reset, audit logging, and user status checks
@@ -14,11 +15,13 @@ class AuthController extends BaseController
 {
     protected $userModel;
     protected $auditModel;
+	protected $loginHistoryModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
         $this->auditModel = new AuditLogModel();
+		$this->loginHistoryModel = new LoginHistoryModel();
         helper(['form', 'url', 'cookie']);
     }
 
@@ -68,6 +71,10 @@ class AuthController extends BaseController
         $password = $this->request->getPost('password');
         $remember = $this->request->getPost('remember');
 
+		// Infos pour le login history
+		$ip = $this->request->getIPAddress();
+		$ua = $this->request->getUserAgent()->getAgentString();
+
         // Recherche de l'utilisateur
         $user = $this->userModel->findByEmail($email);
 
@@ -91,6 +98,12 @@ class AuthController extends BaseController
         // Vérification du mot de passe
         if (!$this->userModel->verifyPassword($password, $user['password_hash'])) {
             $this->auditModel->logLogin($user['id'], false, 'Invalid password');
+			$this->loginHistoryModel->logLogin(
+				userId: $user['id'],
+				ipAddress: $ip,
+				userAgent: $ua,
+				success: false
+			);
             return redirect()->back()->withInput()->with('error', 'Email ou mot de passe incorrect.');
         }
 
@@ -99,6 +112,12 @@ class AuthController extends BaseController
 
         // Log successful login
         $this->auditModel->logLogin($user['id'], true);
+		$this->loginHistoryModel->logLogin(
+			userId: $user['id'] ?? null, 
+			ipAddress: $ip,
+			userAgent: $ua,
+			success: true
+		);
 
         // Get user's companies
         $userCompanyModel = new UserCompanyModel();
