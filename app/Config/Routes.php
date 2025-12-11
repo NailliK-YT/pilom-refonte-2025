@@ -132,6 +132,10 @@ $routes->group('account/rgpd', ['filter' => 'auth'], function ($routes) {
 //$routes->match(['GET', 'POST'], 'login-old', 'Auth::login');
 //$routes->get('logout-old', 'Auth::logout');
 $routes->get('dashboard', 'Dashboard::index', ['filter' => 'auth']);
+$routes->get('dashboard/getKpiData', 'Dashboard::getKpiData', ['filter' => 'auth']);
+$routes->get('dashboard/getChartData', 'Dashboard::getChartData', ['filter' => 'auth']);
+$routes->get('dashboard/getRecentInvoices', 'Dashboard::getRecentInvoices', ['filter' => 'auth']);
+$routes->get('dashboard/getNotifications', 'Dashboard::getNotifications', ['filter' => 'auth']);
 
 // Multi-step registration routes
 $routes->match(['GET', 'POST'], 'register', 'Registration::step1');
