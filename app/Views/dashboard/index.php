@@ -4,23 +4,40 @@
 Tableau de Bord
 <?= $this->endSection() ?>
 
-<?= $this->section('content') ?>
-<h1>Tableau de Bord</h1>
-<p>Bienvenue sur votre espace de gestion.</p>
+<?= $this->section('styles') ?>
+<link rel="stylesheet" href="<?= base_url('css/dashboard-kpi.css') ?>">
+<style>
+/* Chart.js responsive containers */
+.chart-container { position: relative; height: 250px; }
+.chart-container-doughnut { height: 220px; }
+.chart-container-bar { height: 220px; }
+</style>
+<?= $this->endSection() ?>
 
-<div class="features-grid">
-    <div class="feature-card">
-        <h3>Chiffre d'Affaires</h3>
-        <p style="font-size: 24px; font-weight: bold; color: var(--primary-color);">0,00 €</p>
-        <p style="font-size: 14px; color: #666;">Ce mois-ci</p>
-    </div>
-    <div class="feature-card">
-        <h3>Factures en attente</h3>
-        <p style="font-size: 24px; font-weight: bold; color: #eab308;">0</p>
-    </div>
-    <div class="feature-card">
-        <h3>Nouveaux Clients</h3>
-        <p style="font-size: 24px; font-weight: bold; color: var(--secondary-color);">0</p>
-    </div>
+<?= $this->section('content') ?>
+
+<!-- Quick Actions Bar -->
+<?= $this->include('dashboard/partials/quick_actions') ?>
+
+<!-- KPI Cards -->
+<?= $this->include('dashboard/partials/kpi_cards') ?>
+
+<!-- Charts Section -->
+<?= $this->include('dashboard/partials/charts') ?>
+
+<!-- Bottom Grid: Invoices & Notifications -->
+<div class="dashboard-bottom-grid">
+    <!-- Recent Invoices -->
+    <?= $this->include('dashboard/partials/recent_invoices') ?>
+    
+    <!-- Notifications -->
+    <?= $this->include('dashboard/partials/notifications') ?>
 </div>
+
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="<?= base_url('js/dashboard.js') ?>"></script>
 <?= $this->endSection() ?>

@@ -81,6 +81,13 @@ class BusinessSectorSeeder extends Seeder
             ],
         ];
 
+        // Check if sectors already exist to prevent duplicates
+        $existing = $this->db->table('business_sectors')->countAllResults();
+        if ($existing > 0) {
+            echo "⚠ Secteurs d'activité déjà existants ({$existing}), ignoré\n";
+            return;
+        }
+
         $this->db->table('business_sectors')->insertBatch($sectors);
         echo "✓ " . count($sectors) . " secteurs d'activité créés\n";
     }
