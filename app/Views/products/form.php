@@ -22,6 +22,7 @@
     }
 
     .form-header h1 {
+		color: white;
         font-size: 28px;
         font-weight: 700;
         margin: 0 0 8px 0;
@@ -509,7 +510,6 @@
     <div class="form-section">
         <div class="form-header">
             <h1>
-                <span>📦</span>
                 <?= esc($title) ?>
             </h1>
             <p><?= isset($product) ? 'Modifiez les informations du produit' : 'Créez un nouveau produit pour votre catalogue' ?></p>
