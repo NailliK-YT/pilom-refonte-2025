@@ -62,11 +62,11 @@
                             <td>
                                 <?= esc($entry['parsed']['device']) ?>
                                 <small>(<?= esc($entry['parsed']['platform']) ?>)</small>
-                            </td>
+                            </td>+
                             <td><?= esc($entry['parsed']['browser']) ?></td>
                             <td><?= esc($entry['ip_address']) ?></td>
                             <td>
-                                <?php if ($entry['success']): ?>
+                                <?php if ($entry['success'] === 't'): ?>
                                     <span class="badge badge-success">✓ Réussie</span>
                                 <?php else: ?>
                                     <span class="badge badge-danger">✗ Échouée</span>

@@ -278,26 +278,38 @@ class ProductModel extends Model
     }
 
     /**
-     * Archive un produit (suppression logique)
+     * Archive/Restore un produit
      * 
      * @param string $productId ID du produit
      * @return bool
      */
-    public function archiveProduct(string $productId): bool
-    {
-        return $this->update($productId, ['is_archived' => true]);
-    }
+	public function toggleArchive(string $productId): bool
+	{
+		$product = $this->find($productId);
 
-    /**
-     * Restaure un produit archivé
-     * 
-     * @param string $productId ID du produit
-     * @return bool
-     */
-    public function restoreProduct(string $productId): bool
-    {
-        return $this->update($productId, ['is_archived' => false]);
-    }
+		if (!$product) {
+			throw new \Exception("Produit introuvable");
+		}
+
+		log_message('debug', "Produit $productId before update:" . $product['is_archived']);
+
+		// Inverser le statut actuel
+		$newStatus = ($product['is_archived'] === 'f' || $product['is_archived'] === false) ? true : false;
+
+		// Mettre à jour
+		$affected = $this->update($productId, [
+			'is_archived' => $newStatus
+		]);
+
+
+		log_message('debug', "Update affected rows: $affected");
+
+		$productUpdated = $this->find($productId);
+		log_message('debug', "Produit $productId after update:" . $productUpdated['is_archived']);
+
+		return $newStatus; // true si archivé, false si restauré
+	}
+
 
     /**
      * Archive plusieurs produits en une fois
@@ -311,6 +323,7 @@ class ProductModel extends Model
             ->set(['is_archived' => true])
             ->update();
     }
+	
 
     /**
      * Récupère les produits d'une catégorie

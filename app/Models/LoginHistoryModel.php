@@ -30,7 +30,6 @@ class LoginHistoryModel extends Model
     protected $validationRules = [
         'user_id' => 'required|is_not_unique[users.id]',
         'login_at' => 'required',
-        'success' => 'required|in_list[0,1]'
     ];
 
     protected $validationMessages = [];
@@ -77,11 +76,12 @@ class LoginHistoryModel extends Model
     public function logLogin(string $userId, string $ipAddress, string $userAgent, bool $success = true): bool
     {
         $data = [
+			'id' => $this->generateUUID(),
             'user_id' => $userId,
             'ip_address' => $ipAddress,
             'user_agent' => $userAgent,
             'login_at' => date('Y-m-d H:i:s'),
-            'success' => $success
+            'success' => $success ? true : false,
         ];
 
         return $this->insert($data) !== false;
