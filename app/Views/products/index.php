@@ -129,6 +129,7 @@
                     <th>Prix HT</th>
                     <th>TVA</th>
                     <th>Prix TTC</th>
+					<th>Stock</th>
                     <th>Statut</th>
                     <th width="250">Actions</th>
                 </tr>
@@ -152,6 +153,13 @@
                         <td><?= esc($product['tva_rate'] ?? 'N/A') ?> %</td>
                         <td><strong><?= number_format($product['price_ttc'] ?? ($product['price_ht'] * 1.2), 2, ',', ' ') ?> €</strong></td>
                         <td>
+							<?= esc($product['stock_quantity'] ?? '') ?>
+							<?php if ($product['stock_alert_threshold'] !== null && ($product['stock_alert_threshold'] ?? 0) > 0 
+									&& $product['stock_quantity'] <= $product['stock_alert_threshold']): ?>
+								<span class="badge badge-warning">⚠ Bas</span>
+							<?php endif; ?>
+						</td>
+						<td>
                             <?php if (($product['is_archived'] ?? 'f') === 't'): ?>
                                 <span class="badge badge-danger">Archivé</span>
                             <?php else: ?>

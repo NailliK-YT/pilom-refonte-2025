@@ -69,15 +69,31 @@
                     <h2 class="mt-3">Détails</h2>
                     <table style="width: 100%; margin-top: 12px;">
                         <tr>
-                            <td style="padding: 8px 0; font-weight: 600;">Référence:</td>
+                            <td style="padding: 8px 0; font-weight: 600;">Référence :</td>
                             <td style="padding: 8px 0;"><?= esc($product['reference']) ?></td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; font-weight: 600;">Catégorie:</td>
+                            <td style="padding: 8px 0; font-weight: 600;">Catégorie :</td>
                             <td style="padding: 8px 0;"><?= esc($product['category_name'] ?? 'N/A') ?></td>
                         </tr>
+						<tr>
+							<td style="padding: 8px 0; font-weight: 600;">Stock :</td>
+							<td style="padding: 8px 0;">
+								<?= esc($product['stock_quantity'] ?? 0) ?>
+
+								<?php if (!empty($product['stock_alert_threshold']) && $product['stock_quantity'] <= $product['stock_alert_threshold']): ?>
+									<span class="badge badge-warning" style="margin-left: 6px;">⚠ Bas</span>
+								<?php endif; ?>
+							</td>
+						</tr>
+						<tr>
+							<td style="padding: 8px 0; font-weight: 600;">Seuil d'alerte :</td>
+							<td style="padding: 8px 0;">
+								<?= esc($product['stock_alert_threshold'] ?? 0) ?>
+							</td>
+						</tr>
                         <tr>
-                            <td style="padding: 8px 0; font-weight: 600;">Statut:</td>
+                            <td style="padding: 8px 0; font-weight: 600;">Statut :</td>
                             <td style="padding: 8px 0;">
                                 <?php if ($product['is_archived'] ?? false): ?>
                                     <span class="badge badge-danger">Archivé</span>
@@ -87,15 +103,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; font-weight: 600;">Créé le:</td>
+                            <td style="padding: 8px 0; font-weight: 600;">Créé le :</td>
                             <td style="padding: 8px 0;"><?= date('d/m/Y à H:i', strtotime($product['created_at'])) ?>
                             </td>
                         </tr>
                     </table>
 
                     <?php if (!empty($product['description'])): ?>
-                        <h3 class="mt-3">Description</h3>
-                        <p><?= nl2br(esc($product['description'])) ?></p>
+                        <h3 class="mt-3">Description :</h3>
+                        <p style="font-weight: 400;"><?= nl2br(esc($product['description'])) ?></p>
                     <?php endif; ?>
                 </div>
             </div>
@@ -103,7 +119,7 @@
             <!-- Colonne prix -->
             <div style="flex: 1;">
                 <div class="price-box">
-                    <h3 style="margin: 0 0 16px 0;">Prix</h3>
+                    <h3 style="margin: 0 0 16px 0; font-size: 18px;">Prix</h3>
                     <div style="margin-bottom: 8px;">
                         <span style="opacity: 0.9;">Prix HT</span><br>
                         <strong style="font-size: 18px;"><?= number_format($product['price_ht'], 2, ',', ' ') ?>

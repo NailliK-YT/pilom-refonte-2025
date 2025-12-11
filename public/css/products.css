@@ -265,7 +265,7 @@ textarea.form-control {
 }
 
 .table td {
-    padding: 16px;
+    padding: 16px 12px;
     border-top: 1px solid var(--border-color);
 }
 

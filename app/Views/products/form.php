@@ -616,6 +616,39 @@
                                 </select>
                             </div>
                         </div>
+
+						<div class="form-row" style="align-items: start;">
+							<div class="form-field">
+								<label for="stock_quantity">
+									Stock disponible
+								</label>
+								<input 
+									type="number" 
+									id="stock_quantity" 
+									name="stock_quantity"
+									min="0"
+									step="1"
+									value="<?= old('stock_quantity', $product['stock_quantity'] ?? '') ?>"
+									placeholder="Ex: 100"
+								>
+							</div>
+
+							<div class="form-field">
+								<label for="stock_alert_threshold">
+									Seuil d'alerte
+								</label>
+								<input 
+									type="number" 
+									id="stock_alert_threshold" 
+									name="stock_alert_threshold"
+									min="0"
+									step="1"
+									value="<?= old('stock_alert_threshold', $product['stock_alert_threshold'] ?? '') ?>"
+									placeholder="Ex: 10"
+								>
+								<small style="color: #7f8c8d; font-size: 12px;">Alerte lorsque le stock descend en dessous de ce nombre</small>
+							</div>
+						</div>
                     </div>
 
                     <!-- Pricing Section -->
@@ -652,7 +685,7 @@
                                 <span class="price-value" id="display-tva">0,00 €</span>
                             </div>
                             <div class="price-row">
-                                <span class="price-label">P	rix TTC</span>
+                                <span class="price-label">Prix TTC</span>
                                 <span class="price-value highlight" id="display-ttc">0,00 €</span>
                             </div>
                         </div>

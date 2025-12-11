@@ -183,6 +183,8 @@ class Products extends BaseController
             'price_ht' => 'required|decimal|greater_than_equal_to[0]',
             'tva_id' => 'required',
             'category_id' => 'required',
+			'stock_quantity' => 'permit_empty|integer|greater_than_equal_to[0]',
+       		'stock_alert_threshold' => 'permit_empty|integer|greater_than_equal_to[0]',
             'product_image' => 'permit_empty|uploaded[product_image]|max_size[product_image,5120]|is_image[product_image]'
         ];
 
@@ -206,6 +208,8 @@ class Products extends BaseController
                 'tva_id' => $this->request->getPost('tva_id'),
                 'category_id' => $this->request->getPost('category_id'),
                 'company_id' => $companyId,
+				'stock_quantity' => $this->request->getPost('stock_quantity') ? $this->request->getPost('stock_quantity') : null,
+				'stock_alert_threshold' => $this->request->getPost('stock_alert_threshold') ? $this->request->getPost('stock_alert_threshold') : null,
                 'image_path' => $imagePath,
                 'is_archived' => false
             ];
@@ -275,6 +279,8 @@ class Products extends BaseController
             'price_ht' => 'required|decimal|greater_than_equal_to[0]',
             'tva_id' => 'required',
             'category_id' => 'required',
+			'stock_quantity' => 'permit_empty|integer|greater_than_equal_to[0]',
+       		'stock_alert_threshold' => 'permit_empty|integer|greater_than_equal_to[0]',
             'product_image' => 'permit_empty|uploaded[product_image]|max_size[product_image,5120]|is_image[product_image]'
         ];
 
@@ -306,11 +312,18 @@ class Products extends BaseController
                 'price_ht' => $this->request->getPost('price_ht'),
                 'tva_id' => $this->request->getPost('tva_id'),
                 'category_id' => $this->request->getPost('category_id'),
+				'stock_quantity' => $this->request->getPost('stock_quantity'),
+				'stock_alert_threshold' => $this->request->getPost('stock_alert_threshold'),
                 'image_path' => $imagePath
             ];
 
             // Mettre à jour le produit
-            $this->productModel->update($id, $productData);
+            //$this->productModel->update($id, $productData);
+
+			$updated = $this->productModel->update($id, $productData);
+			$productAfter = $this->productModel->find($id);
+			log_message('debug', 'Update success: ' . ($updated ? 'yes' : 'no'));
+			log_message('debug', 'After update: ' . print_r($productAfter, true));
 
             // Supprimer les anciens prix dégressifs
             $this->priceTierModel->deleteByProduct($id);

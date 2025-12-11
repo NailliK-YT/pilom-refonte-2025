@@ -26,7 +26,9 @@ class ProductModel extends Model
         'category_id',
         'company_id',
         'image_path',
-        'is_archived'
+        'is_archived',
+		'stock_quantity',
+		'stock_alert_threshold'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -46,7 +48,9 @@ class ProductModel extends Model
         'tva_id' => 'required|is_not_unique[tva_rates.id]',
         'category_id' => 'required|is_not_unique[categories.id]',
         'image_path' => 'permit_empty|max_length[500]',
-        'is_archived' => 'permit_empty'
+        'is_archived' => 'permit_empty',
+		'stock_quantity' => 'permit_empty|integer|greater_than_equal_to[0]',
+		'stock_alert_threshold' => 'permit_empty|integer|greater_than_equal_to[0]'
     ];
 
     protected $validationMessages = [
@@ -72,7 +76,16 @@ class ProductModel extends Model
         'category_id' => [
             'required' => 'La catégorie est obligatoire',
             'is_not_unique' => 'La catégorie sélectionnée n\'existe pas'
-        ]
+		],
+		'stock_quantity' => [
+			'int' => 'La quantité en stock doit être un nombre entier.',
+			'greater_than_equal_to' => 'La quantité en stock doit être supérieure ou égale à 0.',
+		],
+
+		'stock_alert_threshold' => [
+			'int' => 'Le seuil d’alerte doit être un nombre entier.',
+			'greater_than_equal_to' => 'Le seuil d’alerte doit être supérieur ou égal à 0.',
+		],
     ];
 
     protected $skipValidation = false;
@@ -197,12 +210,13 @@ class ProductModel extends Model
             $builder->where('products.price_ht <=', $params['max_price']);
         }
 
-        // Filtre par statut (archivé ou non)
-        //if (isset($params['is_archived'])) {
-        //    $builder->where('products.is_archived', $params['is_archived']);
-        //} else {
-        //    $builder->where('products.is_archived', false); // Par défaut, masquer les archivés
-        //}
+		// Filtre par stock
+		if (isset($params['min_stock']) && $params['min_stock'] !== '') {
+			$builder->where('products.stock_quantity >=', $params['min_stock']);
+		}
+		if (isset($params['max_stock']) && $params['max_stock'] !== '') {
+			$builder->where('products.stock_quantity <=', $params['max_stock']);
+		}
 
         // Tri
         $sortBy = $params['sort_by'] ?? 'created_at';
@@ -263,13 +277,6 @@ class ProductModel extends Model
         if (isset($params['max_price']) && $params['max_price'] !== '') {
             $builder->where('price_ht <=', $params['max_price']);
         }
-
-        //// Filtre par statut
-        //if (isset($params['is_archived'])) {
-        //    $builder->where('is_archived', $params['is_archived']);
-        //} else {
-        //    $builder->where('is_archived', false);
-        //}
 
         return $builder->countAllResults();
     }
