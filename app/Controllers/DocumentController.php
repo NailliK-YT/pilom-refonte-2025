@@ -23,6 +23,7 @@ class DocumentController extends BaseController
     {
         $companyId = session()->get('company_id');
         $folderId = $this->request->getGet('folder');
+		$folderId = $folderId !== null ? (int) $folderId : null;
 
         $data = [
             'title' => 'Mes Documents',
