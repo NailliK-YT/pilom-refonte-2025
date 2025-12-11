@@ -63,20 +63,28 @@ class Products extends BaseController
 
         $perPage = 20;
 
-        // Récupération des paramètres de recherche et filtres
-        $params = [
-            'company_id' => $companyId,
-            'keywords' => $this->request->getGet('search'),
-            'category_id' => $this->request->getGet('category'),
-            'min_price' => $this->request->getGet('min_price'),
-            'max_price' => $this->request->getGet('max_price'),
-            'is_archived' => $this->request->getGet('archived') === '1',
-            'sort_by' => $this->request->getGet('sort_by') ?? 'created_at',
-            'sort_order' => $this->request->getGet('sort_order') ?? 'DESC'
-        ];
+		// Récupérer les filtres de session
+		$sessionFilters = session()->get('product_filters') ?? [];
 
-        // Sauvegarder les filtres en session
-        session()->set('product_filters', $params);
+		// Récupération des filtres GET
+		$getFilters = [
+			'company_id'  => $companyId,
+			'keywords'    => $this->request->getGet('search'),
+			'category_id' => $this->request->getGet('category'),
+			'min_price'   => $this->request->getGet('min_price'),
+			'max_price'   => $this->request->getGet('max_price'),
+			'status'      => $this->request->getGet('status') ?? ($sessionFilters['status'] ?? 'active'),
+			'sort_by'     => $this->request->getGet('sort_by'),
+			'sort_order'  => $this->request->getGet('sort_order')
+		];
+
+		// Fusionner GET + session : GET a priorité si défini
+		$params = array_merge($sessionFilters, array_filter($getFilters, fn($v) => $v !== null));
+
+		// Mettre à jour la session uniquement si ce sont de nouveaux filtres (GET)
+		if (!empty(array_filter($getFilters, fn($v) => $v !== null))) {
+			session()->set('product_filters', $params);
+		}
 
         $currentPage = $this->request->getGet('page') ?? 1;
         $offset = ($currentPage - 1) * $perPage;
@@ -88,6 +96,7 @@ class Products extends BaseController
             'title' => 'Gestion des produits',
             'products' => $products,
             'categories' => $this->categoryModel->getForSelect($companyId),
+			'statuses' => ['all' => 'Tous les statuts', 'active' => 'Actif', 'archived' => 'Archivé'],
             'filters' => $params,
             'totalProducts' => $totalProducts,
             'currentPage' => $currentPage,
@@ -328,7 +337,6 @@ class Products extends BaseController
 	{
 		try {
 			$newStatus = $this->productModel->toggleArchive($id);
-			
 
 			return redirect()->to('/products')
 				->with('success', $newStatus

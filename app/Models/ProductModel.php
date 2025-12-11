@@ -46,7 +46,7 @@ class ProductModel extends Model
         'tva_id' => 'required|is_not_unique[tva_rates.id]',
         'category_id' => 'required|is_not_unique[categories.id]',
         'image_path' => 'permit_empty|max_length[500]',
-        'is_archived' => 'permit_empty|in_list[0,1,true,false]'
+        'is_archived' => 'permit_empty'
     ];
 
     protected $validationMessages = [
@@ -180,6 +180,15 @@ class ProductModel extends Model
             $builder->where('products.category_id', $params['category_id']);
         }
 
+		// Filtre par statut
+		if (!empty($params['status'])) {
+			if ($params['status'] === 'active') {
+				$builder->where('products.is_archived', false);
+			} elseif ($params['status'] === 'archived') {
+				$builder->where('products.is_archived', true);
+			}
+		} // Si status = 'all', aucun filtre sur is_archived
+
         // Filtre par plage de prix
         if (isset($params['min_price']) && $params['min_price'] !== '') {
             $builder->where('products.price_ht >=', $params['min_price']);
@@ -189,11 +198,11 @@ class ProductModel extends Model
         }
 
         // Filtre par statut (archivé ou non)
-        if (isset($params['is_archived'])) {
-            $builder->where('products.is_archived', $params['is_archived']);
-        } else {
-            $builder->where('products.is_archived', false); // Par défaut, masquer les archivés
-        }
+        //if (isset($params['is_archived'])) {
+        //    $builder->where('products.is_archived', $params['is_archived']);
+        //} else {
+        //    $builder->where('products.is_archived', false); // Par défaut, masquer les archivés
+        //}
 
         // Tri
         $sortBy = $params['sort_by'] ?? 'created_at';
@@ -237,6 +246,16 @@ class ProductModel extends Model
             $builder->where('category_id', $params['category_id']);
         }
 
+		 // Filtre par statut
+		if (!empty($params['status'])) {
+			if ($params['status'] === 'active') {
+				$builder->where('is_archived', false);
+			} elseif ($params['status'] === 'archived') {
+				$builder->where('is_archived', true);
+			}
+		}// Si status = 'all', aucun filtre sur is_archived
+
+
         // Filtre par plage de prix
         if (isset($params['min_price']) && $params['min_price'] !== '') {
             $builder->where('price_ht >=', $params['min_price']);
@@ -245,12 +264,12 @@ class ProductModel extends Model
             $builder->where('price_ht <=', $params['max_price']);
         }
 
-        // Filtre par statut
-        if (isset($params['is_archived'])) {
-            $builder->where('is_archived', $params['is_archived']);
-        } else {
-            $builder->where('is_archived', false);
-        }
+        //// Filtre par statut
+        //if (isset($params['is_archived'])) {
+        //    $builder->where('is_archived', $params['is_archived']);
+        //} else {
+        //    $builder->where('is_archived', false);
+        //}
 
         return $builder->countAllResults();
     }

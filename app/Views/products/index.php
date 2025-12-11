@@ -58,6 +58,20 @@
                 </select>
             </div>
 
+			<div class="form-group" style="flex: 1;">
+				<label class="form-label" for="status">Statut</label>
+				<select id="status" name="status" class="form-control">
+					<?php foreach ($statuses as $id => $name): ?>
+						<option value="<?= esc($id) ?>"
+							<?= ($filters['status'] ?? 'active') === $id ? 'selected' : '' ?>>
+							<?= esc($name) ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</div>
+
+
+
             <div class="form-group" style="flex: 1;">
                 <label class="form-label" for="min_price">Prix min (€)</label>
                 <input type="number" 
@@ -86,18 +100,7 @@
                     <option value="price_ht" <?= ($filters['sort_by'] ?? '') == 'price_ht' ? 'selected' : '' ?>>Prix</option>
                 </select>
             </div>
-        </div>
-
-        <div class="form-check">
-            <input type="checkbox" 
-                   id="archived" 
-                   name="archived" 
-                   class="form-check-input"
-                   value="1"
-                   <?= ($filters['is_archived'] ?? false) ? 'checked' : '' ?>>
-            <label class="form-check-label" for="archived">
-                Afficher les produits archivés
-            </label>
+			
         </div>
 
         <div class="d-flex gap-2 mt-2">
