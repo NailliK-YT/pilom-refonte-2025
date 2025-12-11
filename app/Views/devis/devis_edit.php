@@ -70,10 +70,10 @@
                     <select name="statut" class="form-select" required>
                         <option value="">Sélectionner</option>
                         <option value="brouillon" <?= old('statut', $devis['statut']) === 'brouillon' ? 'selected' : '' ?>>Brouillon</option>
-                        <option value="envoye" <?= old('statut', $devis['statut']) === 'envoye' ? 'selected' : '' ?>>Envoyé</option>
-                        <option value="accepte" <?= old('statut', $devis['statut']) === 'accepte' ? 'selected' : '' ?>>Accepté</option>
-                        <option value="refuse" <?= old('statut', $devis['statut']) === 'refuse' ? 'selected' : '' ?>>Refusé</option>
-                        <option value="expire" <?= old('statut', $devis['statut']) === 'expire' ? 'selected' : '' ?>>Expiré</option>
+                        <option value="envoye" <?= old('statut', $devis['statut']) === 'envoyé' ? 'selected' : '' ?>>Envoyé</option>
+                        <option value="accepte" <?= old('statut', $devis['statut']) === 'accepté' ? 'selected' : '' ?>>Accepté</option>
+                        <option value="refuse" <?= old('statut', $devis['statut']) === 'refusé' ? 'selected' : '' ?>>Refusé</option>
+                        <option value="expire" <?= old('statut', $devis['statut']) === 'expiré' ? 'selected' : '' ?>>Expiré</option>
                     </select>
                 </div>
 

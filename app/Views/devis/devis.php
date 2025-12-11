@@ -76,10 +76,10 @@
 						<?php
 						$statusClassMap = [
 							'brouillon' => 'statut-gris',
-							'envoye'   => 'statut-bleu',
-							'accepte'  => 'statut-vert',
-							'refuse'   => 'statut-orange',
-							'expire'   => 'statut-rouge',
+							'envoyé'   => 'statut-bleu',
+							'accepté'  => 'statut-vert',
+							'refusé'   => 'statut-orange',
+							'expiré'   => 'statut-rouge',
 						];
 						$etat = strtolower($d['statut']);
 						$classe = $statusClassMap[$etat] ?? '';

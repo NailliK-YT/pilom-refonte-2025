@@ -218,6 +218,7 @@ class DevisController extends BaseController
 			'contact_id'    => $contactId,
 		];
 
+
 		$this->devisModel->update($id, $data);
 
 		return redirect()->to('/devis')->with('success', 'Devis mis à jour avec succès.');
