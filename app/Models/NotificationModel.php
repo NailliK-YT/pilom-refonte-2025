@@ -123,7 +123,7 @@ class NotificationModel extends Model
     /**
      * Create invoice notification
      */
-    public function notifyInvoiceCreated(string $userId, string $invoiceNumber, string $companyId = null): bool
+    public function notifyInvoiceCreated(string $userId, string $invoiceNumber, ?string $companyId = null): bool
     {
         return $this->createNotification(
             $userId,
@@ -141,7 +141,7 @@ class NotificationModel extends Model
     /**
      * Create payment notification
      */
-    public function notifyPaymentReceived(string $userId, float $amount, string $invoiceNumber, string $companyId = null): bool
+    public function notifyPaymentReceived(string $userId, float $amount, string $invoiceNumber, ?string $companyId = null): bool
     {
         return $this->createNotification(
             $userId,
@@ -159,7 +159,7 @@ class NotificationModel extends Model
     /**
      * Create treasury alert notification
      */
-    public function notifyTreasuryAlert(string $userId, string $alertName, float $currentBalance, string $companyId = null): bool
+    public function notifyTreasuryAlert(string $userId, string $alertName, float $currentBalance, ?string $companyId = null): bool
     {
         return $this->createNotification(
             $userId,
@@ -177,7 +177,7 @@ class NotificationModel extends Model
     /**
      * Create system notification
      */
-    public function notifySystem(string $userId, string $title, string $message, string $link = null): bool
+    public function notifySystem(string $userId, string $title, string $message, ?string $link = null): bool
     {
         return $this->createNotification(
             $userId,
@@ -194,7 +194,7 @@ class NotificationModel extends Model
 	/**
 	 * Notifier une activité suspecte
 	 */
-	public function notifySuspiciousActivity(string $userId, string $activityDescription, string $companyId = null): bool
+	public function notifySuspiciousActivity(string $userId, string $activityDescription, ?string $companyId = null): bool
 	{
 		return $this->createNotification(
 			$userId,

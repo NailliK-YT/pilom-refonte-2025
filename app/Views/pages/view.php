@@ -1,5 +1,19 @@
 <?= $this->extend('layouts/public') ?>
 
+<?= $this->section('styles') ?>
+<style>
+	h1 {
+		color: white;
+	}
+
+	.container ol,	
+	.container ol li {
+		list-style: none;
+		color: #666;
+	}
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 
 <!-- Fil d'Ariane -->

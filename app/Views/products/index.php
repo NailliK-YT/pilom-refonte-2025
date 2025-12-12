@@ -156,7 +156,7 @@
 							<?= esc($product['stock_quantity'] ?? '') ?>
 							<?php if ($product['stock_alert_threshold'] !== null && ($product['stock_alert_threshold'] ?? 0) > 0 
 									&& $product['stock_quantity'] <= $product['stock_alert_threshold']): ?>
-								<span class="badge badge-warning">⚠ Bas</span>
+								<span class="badge badge-warning">⚠</span>
 							<?php endif; ?>
 						</td>
 						<td>
@@ -171,9 +171,9 @@
                                class="btn btn-sm btn-outline">Voir</a>
                             <a href="<?= base_url('products/edit/' . $product['id']) ?>" 
                                class="btn btn-sm btn-outline">Modifier</a>
-                            <form method="post" 
+                            <form method="post"
                                   action="<?= base_url('products/archive/' . $product['id']) ?>"
-                                  style="display: inline;">
+                                  style="display: flex;">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-sm btn-danger">
                                     <?= ($product['is_archived'] ?? 'f') === 't' ? 'Restaurer' : 'Archiver' ?>
