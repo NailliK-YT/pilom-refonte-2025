@@ -131,8 +131,18 @@ class CompleteDatabaseSeeder extends Seeder
         echo "\n";
 
         // 20. Pages du site (optionnel)
-        echo "📝 Étape 20/20: Pages du site\n";
+        echo "📝 Étape 20/22: Pages du site\n";
         $this->call('PagesSeeder');
+        echo "\n";
+
+        // 21. Blog (articles, tags, commentaires)
+        echo "📰 Étape 21/22: Blog\n";
+        $this->call('BlogSeeder');
+        echo "\n";
+
+        // 22. Permissions utilisateurs avancées
+        echo "🔑 Étape 22/22: Permissions utilisateurs\n";
+        $this->call('UserPermissionsSeeder');
         echo "\n";
 
         echo "═══════════════════════════════════════════════════════════════\n";
@@ -145,9 +155,10 @@ class CompleteDatabaseSeeder extends Seeder
         echo "   Email test  : {$this->testEmail}\n";
         echo "   Mot de passe : {$this->testPassword}\n";
         echo "\n";
-        echo "🌐 Accédez à l'application : http://localhost:8081\n";
+        echo "🌐 Accédez à l'application : http://localhost:8080\n";
         echo "\n";
     }
+
 
     private function seedCompanyAndUsers()
     {
